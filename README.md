@@ -1,4 +1,4 @@
-# ZypoOps-One# ZypoOps One
+# ZypoOps-One#
 
 **A product-neutral operations and deployment control plane for Zyposoft software.**
 
