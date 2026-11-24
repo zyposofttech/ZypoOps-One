@@ -1,0 +1,23 @@
+{
+  "contract_id": "MC-10",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "notice_id": "66666666-6666-4666-8666-666666666666",
+    "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "rollout_ring": "demo-value",
+    "incompatibilities": [],
+    "clinical_approval_ref": "demo-value",
+    "recall_reason": "demo-value",
+    "recovery_plan_version": "demo-value",
+    "notice_revision": 1,
+    "expires_at": "2027-11-24T05:00:00Z",
+    "severity": "HIGH"
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "test-only-release-recall",
+    "value": "Q8m1YlZ4lCJN-gId4JEuwOu319O-BSzoX7a9kY1HcKSiSlNU8gt7w-Avi0BtDpaqcd1qJwlqK2QMDxB2beouCA"
+  }
+}

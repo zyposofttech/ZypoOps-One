@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zyposoft:ops:contracts:mc-08:v1.1.0",
+  "title": "MC-08 v1.1 proposed interface contract",
+  "description": "Remediated candidate contract. Syntax validation does NOT prove trust; enforce detached cryptographic, policy and state checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract_id": {
+      "const": "MC-08"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "site_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entitlement_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "product_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]{3,40}$"
+          },
+          "minItems": 0,
+          "maxItems": 128,
+          "uniqueItems": true
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "offline_grace_days": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 365
+        },
+        "policy_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "post_grace_mode": {
+          "enum": [
+            "WARN_ONLY",
+            "READ_ONLY_NON_CLINICAL"
+          ]
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "site_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "seats": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": []
+        }
+      },
+      "required": [
+        "entitlement_id",
+        "product_id",
+        "features",
+        "issued_at",
+        "expires_at",
+        "offline_grace_days",
+        "policy_epoch",
+        "not_before",
+        "post_grace_mode"
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "const": "Ed25519"
+        },
+        "kid": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{2,79}$"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{80,128}$"
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "value"
+      ]
+    }
+  },
+  "required": [
+    "contract_id",
+    "schema_version",
+    "message_id",
+    "tenant_id",
+    "site_id",
+    "sent_at",
+    "body",
+    "signature"
+  ]
+}

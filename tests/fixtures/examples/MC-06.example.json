@@ -1,0 +1,36 @@
+{
+  "contract_id": "MC-06",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "manufacturer": "GE",
+    "exact_model": "demo-model",
+    "software_version": "demo-version",
+    "option_fingerprint_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "adapter_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "capabilities": [
+      "DICOM_STORE"
+    ],
+    "sop_classes": [
+      "1.2.840.10008.5.1.4.1.1.6.1"
+    ],
+    "measurement_map_version": "demo-value",
+    "fixture_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "certification_state": "LAB_TESTING",
+    "transfer_syntaxes": [
+      "1.2.840.10008.1.2.1"
+    ],
+    "dicom_roles": [
+      "STORAGE_SCP"
+    ],
+    "witness_id": "lab-witness",
+    "last_verified_at": "2026-11-24T05:00:00Z",
+    "adapter_version": "1.1.0"
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "test-only-device-profile-signer",
+    "value": "RI7zZflDRz7GivJkONgdcnfycxM0jBmY83VWmbVn7tYmDKoaohYsG10VlFvKL-5TH4j0zniol-rHph_FSiATDQ"
+  }
+}

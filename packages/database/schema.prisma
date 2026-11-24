@@ -1,0 +1,526 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model action_lock {
+  id             String          @id @db.Uuid
+  tenant_id      String          @db.Uuid
+  site_id        String          @db.Uuid
+  lock_name      String          @db.VarChar(80)
+  holder_job_id  String?         @db.Uuid
+  acquired_at    DateTime        @db.Timestamptz(6)
+  expires_at     DateTime        @db.Timestamptz(6)
+  site           site            @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  management_job management_job? @relation(fields: [tenant_id, site_id, holder_job_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, lock_name])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model approval_grant {
+  id                                 String              @id @db.Uuid
+  tenant_id                          String              @db.Uuid
+  site_id                            String              @db.Uuid
+  target_sha256                      String              @db.Char(64)
+  operation                          String              @db.VarChar(60)
+  site_authoriser_key_id             String              @db.VarChar(120)
+  site_authoriser_attestation_sha256 String              @db.Char(64)
+  ops_grant_sha256                   String              @db.Char(64)
+  maker_id                           String              @db.VarChar(160)
+  checker_id                         String              @db.VarChar(160)
+  valid_from                         DateTime            @db.Timestamptz(6)
+  valid_until                        DateTime            @db.Timestamptz(6)
+  consumed_at                        DateTime?           @db.Timestamptz(6)
+  site                               site                @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  job_approval_grant                 job_approval_grant?
+  support_session                    support_session[]
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model audit_anchor {
+  id                            String   @id @db.Uuid
+  tenant_id                     String   @db.Uuid
+  site_id                       String   @db.Uuid
+  chain_head_sha256             String   @db.Char(64)
+  through_event_seq             BigInt
+  external_immutable_object_uri String   @db.VarChar(1024)
+  anchored_at                   DateTime @db.Timestamptz(6)
+  site                          site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, through_event_seq])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model backup_status {
+  id                     String    @id @db.Uuid
+  tenant_id              String    @db.Uuid
+  site_id                String    @db.Uuid
+  backup_manifest_sha256 String    @db.Char(64)
+  status                 String    @db.VarChar(32)
+  last_verified_at       DateTime? @db.Timestamptz(6)
+  site                   site      @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model certificate_identity {
+  id                String             @id @db.Uuid
+  tenant_id         String             @db.Uuid
+  site_id           String             @db.Uuid
+  installation_id   String             @db.Uuid
+  issuer            String             @db.VarChar(256)
+  serial            String             @db.VarChar(128)
+  subject_sha256    String             @db.Char(64)
+  not_before        DateTime           @db.Timestamptz(6)
+  not_after         DateTime           @db.Timestamptz(6)
+  revoked_at        DateTime?          @db.Timestamptz(6)
+  installation      installation       @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  revocation_record revocation_record?
+
+  @@unique([issuer, serial])
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model customer_legal_entity {
+  id         String @id @db.Uuid
+  tenant_id  String @db.Uuid
+  legal_name String @db.VarChar(240)
+  tenant     tenant @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, id])
+}
+
+model deployment_artifact {
+  id                     String            @id @db.Uuid
+  product_key            String            @db.VarChar(80)
+  artifact_sha256        String            @unique @db.Char(64)
+  signed_manifest_sha256 String            @db.Char(64)
+  state                  String            @db.VarChar(40)
+  created_at             DateTime          @db.Timestamptz(6)
+  rollout_attempt        rollout_attempt[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model enrolment_claim {
+  id                  String       @id @db.Uuid
+  tenant_id           String       @db.Uuid
+  site_id             String       @db.Uuid
+  installation_id     String       @db.Uuid
+  token_hash          String       @unique @db.Char(64)
+  claim_nonce         String       @db.VarChar(128)
+  issued_at           DateTime     @db.Timestamptz(6)
+  expires_at          DateTime     @db.Timestamptz(6)
+  consumed_at         DateTime?    @db.Timestamptz(6)
+  consumed_csr_sha256 String?      @db.Char(64)
+  installation        installation @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model entitlement {
+  id                 String   @id @db.Uuid
+  tenant_id          String   @db.Uuid
+  site_id            String   @db.Uuid
+  product_key        String   @db.VarChar(80)
+  policy_epoch       BigInt
+  entitlement_sha256 String   @db.Char(64)
+  expires_at         DateTime @db.Timestamptz(6)
+  site               site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, product_key, policy_epoch])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model health_sample {
+  id             String   @id @db.Uuid
+  tenant_id      String   @db.Uuid
+  site_id        String   @db.Uuid
+  component_code String   @db.VarChar(50)
+  numeric_value  Decimal? @db.Decimal
+  captured_at    DateTime @db.Timestamptz(6)
+  site           site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model installation {
+  id                   String                 @id @db.Uuid
+  tenant_id            String                 @db.Uuid
+  site_id              String                 @db.Uuid
+  installation_epoch   Int                    @default(1)
+  status               String                 @db.VarChar(40)
+  host_binding_sha256  String                 @db.Char(64)
+  certificate_identity certificate_identity[]
+  enrolment_claim      enrolment_claim[]
+  site                 site                   @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  site_agent           site_agent[]
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model job_approval_grant {
+  id             String         @id @db.Uuid
+  tenant_id      String         @db.Uuid
+  site_id        String         @db.Uuid
+  job_id         String         @db.Uuid
+  grant_id       String         @unique @db.Uuid
+  consumed_at    DateTime       @default(dbgenerated("transaction_timestamp()")) @db.Timestamptz(6)
+  approval_grant approval_grant @relation(fields: [tenant_id, site_id, grant_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  management_job management_job @relation(fields: [tenant_id, site_id, job_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, grant_id])
+  @@unique([job_id, grant_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model job_attempt {
+  id             String         @id @db.Uuid
+  tenant_id      String         @db.Uuid
+  site_id        String         @db.Uuid
+  job_id         String         @db.Uuid
+  attempt_no     Int
+  state          String         @db.VarChar(40)
+  started_at     DateTime       @db.Timestamptz(6)
+  management_job management_job @relation(fields: [tenant_id, site_id, job_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([job_id, attempt_no])
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model job_progress_event {
+  id              String         @id @db.Uuid
+  tenant_id       String         @db.Uuid
+  site_id         String         @db.Uuid
+  job_id          String         @db.Uuid
+  stage_code      String         @db.VarChar(40)
+  progress_state  String         @db.VarChar(24)
+  event_at        DateTime       @db.Timestamptz(6)
+  sequence_number BigInt
+  management_job  management_job @relation(fields: [tenant_id, site_id, job_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([job_id, sequence_number])
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model job_receipt {
+  id              String         @id @db.Uuid
+  tenant_id       String         @db.Uuid
+  site_id         String         @db.Uuid
+  job_id          String         @unique @db.Uuid
+  terminal_state  String         @db.VarChar(24)
+  evidence_sha256 String         @db.Char(64)
+  completed_at    DateTime       @db.Timestamptz(6)
+  management_job  management_job @relation(fields: [tenant_id, site_id, job_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, job_id])
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model management_job {
+  id                 String               @id @db.Uuid
+  tenant_id          String               @db.Uuid
+  site_id            String               @db.Uuid
+  agent_id           String               @db.Uuid
+  command_type       String               @db.VarChar(60)
+  idempotency_key    String               @db.VarChar(160)
+  nonce              String               @db.VarChar(128)
+  job_sequence       BigInt
+  payload_sha256     String               @db.Char(64)
+  state              String               @db.VarChar(40)
+  created_at         DateTime             @db.Timestamptz(6)
+  expires_at         DateTime             @db.Timestamptz(6)
+  target_sha256      String?              @db.Char(64)
+  action_lock        action_lock[]
+  job_approval_grant job_approval_grant[]
+  job_attempt        job_attempt[]
+  job_progress_event job_progress_event[]
+  job_receipt        job_receipt?
+  site_agent         site_agent           @relation(fields: [tenant_id, site_id, agent_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, agent_id, job_sequence])
+  @@unique([tenant_id, site_id, command_type, idempotency_key])
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, nonce])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model operational_audit_event {
+  id                    String   @id @db.Uuid
+  tenant_id             String   @db.Uuid
+  site_id               String   @db.Uuid
+  event_seq             BigInt
+  event_code            String   @db.VarChar(60)
+  actor_subject         String   @db.VarChar(160)
+  event_sha256          String   @db.Char(64)
+  previous_chain_sha256 String   @db.Char(64)
+  created_at            DateTime @db.Timestamptz(6)
+  site                  site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, event_seq])
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model operator_role {
+  id               String    @id @db.Uuid
+  tenant_id        String    @db.Uuid
+  operator_subject String    @db.VarChar(160)
+  role_code        String    @db.VarChar(60)
+  scope_site_id    String?   @db.Uuid
+  valid_until      DateTime? @db.Timestamptz(6)
+  tenant           tenant    @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  site             site?     @relation(fields: [tenant_id, scope_site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model outbox_event {
+  id           String    @id @db.Uuid
+  tenant_id    String    @db.Uuid
+  site_id      String    @db.Uuid
+  event_type   String    @db.VarChar(60)
+  body_sha256  String    @db.Char(64)
+  created_at   DateTime  @db.Timestamptz(6)
+  published_at DateTime? @db.Timestamptz(6)
+  site         site      @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model restore_drill {
+  id              String @id @db.Uuid
+  tenant_id       String @db.Uuid
+  site_id         String @db.Uuid
+  evidence_sha256 String @db.Char(64)
+  state           String @db.VarChar(32)
+  site            site   @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model revocation_record {
+  id                   String               @id @db.Uuid
+  tenant_id            String               @db.Uuid
+  site_id              String               @db.Uuid
+  certificate_id       String               @unique @db.Uuid
+  reason_code          String               @db.VarChar(60)
+  revoked_at           DateTime             @db.Timestamptz(6)
+  revocation_epoch     BigInt
+  certificate_identity certificate_identity @relation(fields: [tenant_id, site_id, certificate_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, certificate_id])
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model rollout_attempt {
+  id                  String              @id @db.Uuid
+  tenant_id           String              @db.Uuid
+  site_id             String              @db.Uuid
+  artifact_sha256     String              @db.Char(64)
+  state               String              @db.VarChar(40)
+  deployment_artifact deployment_artifact @relation(fields: [artifact_sha256], references: [artifact_sha256], onDelete: NoAction, onUpdate: NoAction)
+  site                site                @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model signing_attestation {
+  id            String   @id @db.Uuid
+  tenant_id     String   @db.Uuid
+  site_id       String   @db.Uuid
+  purpose       String   @db.VarChar(80)
+  key_id        String   @db.VarChar(120)
+  target_sha256 String   @db.Char(64)
+  created_at    DateTime @db.Timestamptz(6)
+  site          site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model site {
+  id                          String                        @id @db.Uuid
+  tenant_id                   String                        @db.Uuid
+  site_code                   String                        @db.VarChar(64)
+  status                      String                        @db.VarChar(40)
+  action_lock                 action_lock[]
+  approval_grant              approval_grant[]
+  audit_anchor                audit_anchor[]
+  backup_status               backup_status[]
+  entitlement                 entitlement[]
+  health_sample               health_sample[]
+  installation                installation[]
+  operational_audit_event     operational_audit_event[]
+  operator_role               operator_role[]
+  outbox_event                outbox_event[]
+  restore_drill               restore_drill[]
+  rollout_attempt             rollout_attempt[]
+  signing_attestation         signing_attestation[]
+  tenant                      tenant                        @relation(fields: [tenant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  site_authoriser_key         site_authoriser_key[]
+  site_configuration_revision site_configuration_revision[]
+  site_ownership_event        site_ownership_event[]
+  site_signing_key            site_signing_key[]
+
+  @@unique([tenant_id, id])
+  @@unique([tenant_id, site_code])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model site_agent {
+  id              String           @id @db.Uuid
+  tenant_id       String           @db.Uuid
+  site_id         String           @db.Uuid
+  installation_id String           @db.Uuid
+  agent_version   String           @db.VarChar(64)
+  status          String           @db.VarChar(40)
+  management_job  management_job[]
+  installation    installation     @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model site_authoriser_key {
+  id                String    @id @db.Uuid
+  tenant_id         String    @db.Uuid
+  site_id           String    @db.Uuid
+  key_id            String    @db.VarChar(120)
+  algorithm         String    @db.VarChar(16)
+  public_key_sha256 String    @db.Char(64)
+  valid_until       DateTime  @db.Timestamptz(6)
+  revoked_at        DateTime? @db.Timestamptz(6)
+  site              site      @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, key_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model site_configuration_revision {
+  id            String @id @db.Uuid
+  tenant_id     String @db.Uuid
+  site_id       String @db.Uuid
+  config_sha256 String @db.Char(64)
+  revision_no   BigInt
+  site          site   @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, revision_no])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model site_ownership_event {
+  id                 String   @id @db.Uuid
+  tenant_id          String   @db.Uuid
+  site_id            String   @db.Uuid
+  ownership_revision BigInt
+  event_code         String   @db.VarChar(60)
+  recorded_at        DateTime @db.Timestamptz(6)
+  site               site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, ownership_revision])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model site_signing_key {
+  tenant_id      String    @db.Uuid
+  site_id        String    @db.Uuid
+  kid            String    @db.VarChar(80)
+  purpose        String    @db.VarChar(80)
+  algorithm      String    @db.VarChar(16)
+  public_key_pem String
+  root_revision  BigInt
+  valid_from     DateTime  @db.Timestamptz(6)
+  valid_until    DateTime  @db.Timestamptz(6)
+  revoked_at     DateTime? @db.Timestamptz(6)
+  site           site      @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([tenant_id, site_id, kid])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model support_diagnostic_bundle {
+  id              String          @id @db.Uuid
+  tenant_id       String          @db.Uuid
+  site_id         String          @db.Uuid
+  session_id      String          @db.Uuid
+  content_sha256  String          @db.Char(64)
+  state           String          @db.VarChar(32)
+  support_session support_session @relation(fields: [tenant_id, site_id, session_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model support_session {
+  id                        String                      @id @db.Uuid
+  tenant_id                 String                      @db.Uuid
+  site_id                   String                      @db.Uuid
+  approval_grant_id         String                      @db.Uuid
+  status                    String                      @db.VarChar(32)
+  expires_at                DateTime                    @db.Timestamptz(6)
+  support_diagnostic_bundle support_diagnostic_bundle[]
+  approval_grant            approval_grant              @relation(fields: [tenant_id, site_id, approval_grant_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model tenant {
+  id                    String                  @id @db.Uuid
+  legal_name            String                  @db.VarChar(240)
+  status                String                  @db.VarChar(40)
+  customer_legal_entity customer_legal_entity[]
+  operator_role         operator_role[]
+  site                  site[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model trusted_signing_key {
+  kid            String    @id @db.VarChar(80)
+  purpose        String    @db.VarChar(80)
+  algorithm      String    @db.VarChar(16)
+  public_key_pem String
+  root_revision  BigInt
+  valid_from     DateTime  @db.Timestamptz(6)
+  valid_until    DateTime  @db.Timestamptz(6)
+  revoked_at     DateTime? @db.Timestamptz(6)
+}

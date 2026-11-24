@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zyposoft:ops:contracts:mc-14:v1.1.0",
+  "title": "MC-14 v1.1 proposed interface contract",
+  "description": "Remediated candidate contract. Syntax validation does NOT prove trust; enforce detached cryptographic, policy and state checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract_id": {
+      "const": "MC-14"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "site_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dataset_categories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "APP_CONFIG",
+              "CLINICAL_DB",
+              "DICOM_ARCHIVE",
+              "FINANCIAL_DB",
+              "MANAGEMENT_AGENT"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        "backup_age_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_success_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "encrypted": {
+          "type": "boolean"
+        },
+        "integrity_verified": {
+          "type": "boolean"
+        },
+        "last_restore_test_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "error_state": {
+          "enum": [
+            "NONE",
+            "BACKUP_FAILED",
+            "INTEGRITY_FAILED",
+            "RESTORE_UNTESTED",
+            "STORAGE_UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "backup_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "dataset_categories",
+        "backup_age_seconds",
+        "last_success_at",
+        "encrypted",
+        "integrity_verified",
+        "last_restore_test_at",
+        "error_state",
+        "backup_manifest_sha256"
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "enum": [
+            "Ed25519",
+            "ES256"
+          ]
+        },
+        "kid": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{2,79}$"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{80,128}$"
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "value"
+      ]
+    }
+  },
+  "required": [
+    "contract_id",
+    "schema_version",
+    "message_id",
+    "tenant_id",
+    "site_id",
+    "sent_at",
+    "body",
+    "signature"
+  ]
+}

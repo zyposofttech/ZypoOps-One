@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zyposoft:ops:contracts:mc-11:v1.1.0",
+  "title": "MC-11 v1.1 proposed interface contract",
+  "description": "Remediated candidate contract. Syntax validation does NOT prove trust; enforce detached cryptographic, policy and state checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract_id": {
+      "const": "MC-11"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "site_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "operator_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "site_authoriser_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "permitted_targets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{1,48}$"
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "permitted_commands": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "READ_TECH_HEALTH",
+              "VERIFY_GATEWAY_PORTS",
+              "FETCH_REDACTED_DIAGNOSTIC_CODES",
+              "RESTART_GATEWAY_APPROVED"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        "valid_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "recording_policy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "grant_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "max_duration_s": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 3600
+        },
+        "max_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 104857600
+        }
+      },
+      "required": [
+        "session_id",
+        "operator_id",
+        "site_authoriser_id",
+        "purpose",
+        "permitted_targets",
+        "permitted_commands",
+        "valid_from",
+        "valid_until",
+        "recording_policy",
+        "grant_id",
+        "max_duration_s",
+        "max_bytes"
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "const": "Ed25519"
+        },
+        "kid": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{2,79}$"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{80,128}$"
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "value"
+      ]
+    }
+  },
+  "required": [
+    "contract_id",
+    "schema_version",
+    "message_id",
+    "tenant_id",
+    "site_id",
+    "sent_at",
+    "body",
+    "signature"
+  ]
+}

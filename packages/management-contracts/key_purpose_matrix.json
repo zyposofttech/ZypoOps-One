@@ -1,0 +1,17 @@
+{
+  "MC-01": "ops_identity",
+  "MC-02": "agent_enrolment_pop",
+  "MC-03": "ops_job",
+  "MC-04": "agent_receipt",
+  "MC-05": "release_signer",
+  "MC-06": "device_profile_signer",
+  "MC-07": "agent_telemetry",
+  "MC-08": "entitlement_signer",
+  "MC-09": "ops_approval",
+  "MC-10": "release_recall",
+  "MC-11": "ops_support",
+  "MC-12": "clinical_distribution",
+  "MC-13": "agent_diagnostics",
+  "MC-14": "agent_backup_receipt",
+  "AUX-01": "agent_progress"
+}

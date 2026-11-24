@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zyposoft:ops:contracts:mc-09:v1.1.0",
+  "title": "MC-09 v1.2 site+tenant bound approval grant",
+  "description": "Remediated candidate contract. Syntax validation does NOT prove trust; enforce detached cryptographic, policy and state checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract_id": {
+      "const": "MC-09"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "site_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "grant_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "operation": {
+          "enum": [
+            "REQUEST_HEALTH",
+            "APPLY_SITE_CONFIG",
+            "DEPLOY_RELEASE",
+            "VERIFY_DEPLOYMENT",
+            "ROTATE_AGENT_CERT",
+            "APPLY_DEVICE_PROFILE",
+            "COLLECT_DIAGNOSTICS",
+            "PAUSE_ROLLOUT",
+            "REVOKE_SUPPORT_SESSION",
+            "ENROL_AGENT",
+            "AUTHORISE_RECOVERY"
+          ]
+        },
+        "operator_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "site_authoriser_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "resource_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{1,48}$"
+          },
+          "minItems": 0,
+          "maxItems": 32,
+          "uniqueItems": true
+        },
+        "valid_from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "maker_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "checker_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "purpose": {
+          "enum": [
+            "DEPLOYMENT",
+            "SECURITY_RECOVERY",
+            "CONFIGURATION_CHANGE",
+            "REMOTE_SUPPORT"
+          ]
+        },
+        "target_digest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "site_authoriser_attestation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "alg": {
+              "enum": [
+                "Ed25519",
+                "ES256"
+              ]
+            },
+            "kid": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._:-]{2,79}$"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{80,128}$"
+            }
+          },
+          "required": [
+            "alg",
+            "kid",
+            "value"
+          ],
+          "description": "REQUIRED NORMATIVE: Site signature input = ASCII(ZOP-SITE-CONSENT-V1\\x00) || JCS({tenant_id: outer.tenant_id, site_id: outer.site_id, body: outer.body minus site_authoriser_attestation}). Verify kid is pinned to BOTH tenant_id and site_id; then check expiry, target digest, role, maker/checker distinct, single use."
+        }
+      },
+      "required": [
+        "grant_id",
+        "operation",
+        "operator_id",
+        "site_authoriser_id",
+        "resource_scope",
+        "valid_from",
+        "valid_until",
+        "maker_id",
+        "checker_id",
+        "purpose",
+        "target_digest_sha256",
+        "site_authoriser_attestation"
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "const": "Ed25519"
+        },
+        "kid": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{2,79}$"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{80,128}$"
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "value"
+      ]
+    }
+  },
+  "required": [
+    "contract_id",
+    "schema_version",
+    "message_id",
+    "tenant_id",
+    "site_id",
+    "sent_at",
+    "body",
+    "signature"
+  ]
+}

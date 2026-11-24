@@ -1,0 +1,137 @@
+[
+  {
+    "id": "MC-01",
+    "name": "MC-01 Site Identity",
+    "scope": "site_scoped",
+    "direction": "Ops -> Agent",
+    "schema": "schemas/MC-01.schema.json",
+    "key_purpose": "ops_identity",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-02",
+    "name": "MC-02 Enrolment",
+    "scope": "site_scoped",
+    "direction": "Agent -> Ops",
+    "schema": "schemas/MC-02.schema.json",
+    "key_purpose": "agent_enrolment_pop",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-03",
+    "name": "MC-03 Management Job",
+    "scope": "site_scoped",
+    "direction": "Ops -> Agent",
+    "schema": "schemas/MC-03.schema.json",
+    "key_purpose": "ops_job",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-04",
+    "name": "MC-04 Job Result",
+    "scope": "site_scoped",
+    "direction": "Agent -> Ops",
+    "schema": "schemas/MC-04.schema.json",
+    "key_purpose": "agent_receipt",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-05",
+    "name": "MC-05 Deployment Manifest",
+    "scope": "artifact_scoped",
+    "direction": "Release authority -> Ops/Agent",
+    "schema": "schemas/MC-05.schema.json",
+    "key_purpose": "release_signer",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-06",
+    "name": "MC-06 Device Profile",
+    "scope": "artifact_scoped",
+    "direction": "Device certification authority -> Gateway",
+    "schema": "schemas/MC-06.schema.json",
+    "key_purpose": "device_profile_signer",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-07",
+    "name": "MC-07 Telemetry",
+    "scope": "site_scoped",
+    "direction": "Agent -> Ops",
+    "schema": "schemas/MC-07.schema.json",
+    "key_purpose": "agent_telemetry",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-08",
+    "name": "MC-08 Licence Entitlement",
+    "scope": "site_scoped",
+    "direction": "Entitlement authority -> Site",
+    "schema": "schemas/MC-08.schema.json",
+    "key_purpose": "entitlement_signer",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-09",
+    "name": "MC-09 Approval Grant",
+    "scope": "site_scoped",
+    "direction": "Ops + Site Authoriser -> Agent",
+    "schema": "schemas/MC-09.schema.json",
+    "key_purpose": "ops_approval",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-10",
+    "name": "MC-10 Update Recall",
+    "scope": "artifact_scoped",
+    "direction": "Recall authority -> Ops/Agent",
+    "schema": "schemas/MC-10.schema.json",
+    "key_purpose": "release_recall",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-11",
+    "name": "MC-11 Support Session",
+    "scope": "site_scoped",
+    "direction": "Ops -> Agent",
+    "schema": "schemas/MC-11.schema.json",
+    "key_purpose": "ops_support",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-12",
+    "name": "MC-12 Clinical Package Handoff",
+    "scope": "artifact_scoped",
+    "direction": "Clinical authority -> Ops/Clinical App",
+    "schema": "schemas/MC-12.schema.json",
+    "key_purpose": "clinical_distribution",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-13",
+    "name": "MC-13 Support Diagnostic Bundle",
+    "scope": "site_scoped",
+    "direction": "Agent -> Ops",
+    "schema": "schemas/MC-13.schema.json",
+    "key_purpose": "agent_diagnostics",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "MC-14",
+    "name": "MC-14 Backup Status",
+    "scope": "site_scoped",
+    "direction": "Agent -> Ops",
+    "schema": "schemas/MC-14.schema.json",
+    "key_purpose": "agent_backup_receipt",
+    "status": "CANDIDATE_UNAPPROVED"
+  },
+  {
+    "id": "AUX-01",
+    "name": "AUX-01 Non-terminal Job Progress",
+    "scope": "site_scoped",
+    "direction": "Agent -> Ops",
+    "schema": "schemas/AUX-01.job_progress.schema.json",
+    "key_purpose": "agent_progress",
+    "status": "CANDIDATE_UNAPPROVED"
+  }
+]

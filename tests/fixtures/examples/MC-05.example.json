@@ -1,0 +1,43 @@
+{
+  "contract_id": "MC-05",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "product_id": "zyposono",
+    "release_id": "zso-1.1.0",
+    "topology": "SINGLE_SITE_LAN",
+    "revision": 1,
+    "components": [
+      {
+        "name": "clinical-api",
+        "oci_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "host_os": "ubuntu-lts",
+    "minimum_disk_gb": 50,
+    "migration_policy": "NO_DB_CHANGE",
+    "backup_evidence_required": true,
+    "required_locks": [
+      "CLINICAL_SIGNOFF",
+      "ACTIVE_ACQUISITION"
+    ],
+    "health_probes": [
+      {
+        "name": "app-readiness",
+        "probe_type": "HTTP",
+        "target": "http://127.0.0.1:3333/health/ready"
+      }
+    ],
+    "cpu_arch": "amd64",
+    "min_memory_mb": 2048,
+    "min_agent_version": "1.1.0",
+    "expires_at": "2027-11-24T05:00:00Z",
+    "sbom_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "test-only-release-signer",
+    "value": "0Dl0ncTub0WggW0EjY1BigOWtn2nwaFySm-meLIovF3aCTDTbC3uMrJd3R_QE_JBpFFWfnVUlZsoVUa9JnMUCw"
+  }
+}

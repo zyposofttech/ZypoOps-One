@@ -1,0 +1,24 @@
+{
+  "contract_id": "MC-13",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "tenant_id": "11111111-1111-4111-8111-111111111111",
+  "site_id": "22222222-2222-4222-8222-222222222222",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "bundle_id": "66666666-6666-4666-8666-666666666666",
+    "manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "scrubber_version": "1.1.0",
+    "allowed_metrics": [
+      "CPU_PERCENT"
+    ],
+    "retention_days": 7,
+    "phi_exception_grant": null,
+    "session_id": "66666666-6666-4666-8666-666666666666"
+  },
+  "signature": {
+    "alg": "ES256",
+    "kid": "test-only-agent-diagnostics",
+    "value": "_PoZU8tc8cVwFu6KqDq0L33UVH6z4srStymM-vLlGemklPJTIBYtYyh7uhioMp1vAr8fEF6dNZ4LieX07LCSig"
+  }
+}

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zyposoft Operations Platform — Independent O0 v1.2 Architecture &amp; Security Re-Audit</title>
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --surface: #ffffff;
+    --ink: #1a1d21;
+    --muted: #4b5563;
+    --rule: #d8dce2;
+    --pass-fg: #0f5132;
+    --pass-bg: #e7f4ec;
+    --warn-fg: #6b4400;
+    --warn-bg: #fdf3dc;
+    --fail-fg: #841915;
+    --fail-bg: #fce8e6;
+    --accent: #1d3557;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif;
+    font-size: 16px;
+    line-height: 1.62;
+  }
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 28px 72px;
+    background: var(--surface);
+  }
+  .kicker {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 32px;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    margin: 0 0 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+  }
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    margin: 40px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+  }
+  h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 22px 0 8px;
+    color: var(--accent);
+  }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13.5px;
+    background: #f1f3f5;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #111827;
+  }
+  pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    background: #f4f6f8;
+    border-left: 4px solid var(--accent);
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 14px 0 20px;
+  }
+  .verdict-band {
+    border-left: 5px solid var(--warn-fg);
+    background: var(--warn-bg);
+    padding: 18px 20px;
+    margin: 20px 0 26px;
+  }
+  .verdict-band p:last-child { margin-bottom: 0; }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: #f4f6f9;
+    padding: 14px 18px;
+    margin: 16px 0 20px;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .badge {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+  .b-pass { background: var(--pass-bg); color: var(--pass-fg); }
+  .b-warn { background: var(--warn-bg); color: var(--warn-fg); }
+  .b-fail { background: var(--fail-bg); color: var(--fail-fg); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    border-bottom: 2px solid var(--ink);
+  }
+  .stats-line {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    padding: 10px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin: 16px 0 22px;
+  }
+  .ledger-row {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ledger-head {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin-bottom: 4px;
+  }
+  .fid {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+  }
+  .meta-tag {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin: 0 8px 0 4px;
+  }
+  .ledger-title {
+    font-weight: 600;
+    margin: 2px 0 4px;
+    font-size: 15px;
+  }
+  .ledger-detail {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  details {
+    margin: 12px 0 20px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 0;
+  }
+  summary {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent);
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .footer-note {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <p class="kicker">Independent Architecture &amp; Security Re-Audit &middot; O0 v1.2 Remediation</p>
+  <h1>Zyposoft Operations Platform — O0 v1.2 Re-Audit Report</h1>
+  <p class="subtitle">Read-only forensic verification of Master BRD v1.2, Consolidated Remediation TDS v1.2, ZypoSono One Master BRD v1.5, and Contracts Verification Pack v1.2 &middot; Audit Date: 24 November 2026</p>
+
+  <section id="section-a">
+    <h2>Section A — Executive Verdict &amp; Three-Gate Separation</h2>
+    <div class="verdict-band">
+      <p><strong>Gate 1 (<code>O0_DESIGN_READINESS_FOR_O1_CODING</code>):</strong> <span class="badge b-warn">GO_WITH_CONDITIONS</span></p>
+      <p>All technical P0 and P1 architecture, cryptography, schema, multi-tenancy, and ZypoSono v1.5 parity defects are now resolved at the design and fixture layer. Controlled O1 Sprint 1 engineering (service scaffolding, production RFC 8785 JCS/Go/TS parsers, PostgreSQL 16 RLS migration harness, SQLite WAL state machine, and mock two-product harnesses) can begin without risk of fundamental architectural redesign, <strong>strictly conditioned</strong> on closing human governance sign-offs (<code>OD01–OD08</code>, <code>Q01–Q07</code>, ZypoSono §22.2) before privileged/production-trust integration or wire-contract freeze.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Governance Gate</th>
+          <th>Verdict</th>
+          <th>Independent Audit Basis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Gate 1: O0 Design Readiness for O1 Coding</strong></td>
+          <td><span class="badge b-warn">GO_WITH_CONDITIONS</span></td>
+          <td>Technical design sound; <code>NEW-P0-01</code>, <code>NEW-P1-01/02/04</code>, <code>NEW-P2-02/03</code>, and <code>AUD-P0-01/04</code> verified closed. Conditioned on 4 binding pre-freeze/pre-trust items below.</td>
+        </tr>
+        <tr>
+          <td><strong>Gate 2: O1 Runtime Verified</strong></td>
+          <td><span class="badge b-warn">NOT_STARTED</span></td>
+          <td>0/50 acceptance tests (<code>AT01–AT50</code>) and 0/70 negative scenarios (<code>NX01–NX70</code>) executed; no Go agent, <code>local-helper</code>, live PG16 RLS pool, TPM 2.0/<code>swtpm</code>, or TUF runtime exists yet.</td>
+        </tr>
+        <tr>
+          <td><strong>Gate 3: Clinical Production Ready</strong></td>
+          <td><span class="badge b-fail">NO_GO</span></td>
+          <td>Blocked by 0/8 human ADR approvals, unbuilt O1 runtime, and absence of clinical/security penetration testing.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="stats-line">
+      <strong>Prior 35 Findings:</strong>
+      <span class="badge b-pass">11 VERIFIED_CLOSED</span> &nbsp;
+      <span class="badge b-warn">20 DESIGN_CORRECTED_BUT_UNTESTED</span> &nbsp;
+      <span class="badge b-warn">3 PARTIAL</span> &nbsp;
+      <span class="badge b-fail">1 OPEN</span> &nbsp;
+      <span class="badge b-pass">0 REGRESSED</span> &nbsp;|&nbsp;
+      <strong>New v1.2 Findings:</strong> <span class="badge b-fail">3 P2</span> (0 P0, 0 P1)
+    </div>
+
+    <h3>Binding Conditions Before Privileged/Production-Trust Coding &amp; Contract Freeze</h3>
+    <ol>
+      <li><strong>Human Governance Hard Stop (<code>AUD-P0-11</code>):</strong> Named Product, Architecture, Security, Privacy, and Clinical owners must resolve <code>Q01–Q07</code> and sign <code>OD01–OD08</code> before integrating production CA/KMS/OIDC credentials, deploying <code>local-helper</code> privileges, or freezing v1.0 wire contracts.</li>
+      <li><strong>Joint ZypoSono Interface Approval (<code>AUD-P1-08</code>):</strong> Complete joint Operations + ZypoSono Clinical/Security sign-off in <code>ZypoSono_One_Master_BRD_v1.5.pdf</code> §22.2 before implementing gateway hooks.</li>
+      <li><strong>Production RFC 8785 JCS in Go &amp; TypeScript (<code>AUD-P0-06</code>):</strong> Replace the ASCII-only Go fixture verifier (<code>tests/verify_vectors.go</code>) with full RFC 8785 JCS and strict duplicate-key/lone-surrogate parsers validated against a shared Unicode/IEEE-754 golden corpus in O1 Sprint 1.</li>
+      <li><strong>Schema &amp; Document Hygiene (<code>NEW-P2-01</code>, <code>V12-P2-01..03</code>):</strong> Add <code>maxLength: 128</code> to <code>schemas/MC-10.schema.json</code> <code>$.properties.body.properties.clinical_approval_ref</code>, add root <code>additionalProperties: false</code> to <code>LOCAL-01.product-management.schema.json</code>, and synchronize stale <code>v1.1</code>/<code>v1.4</code> footers and counts across the 3 BRD/TDS PDFs.</li>
+    </ol>
+  </section>
+
+  <section id="section-b">
+    <h2>Section B — Complete 35-Finding Closure Ledger</h2>
+    <p>Every prior finding from v1.0 (27 findings) and v1.1 (8 findings) was independently re-verified against actual schemas, SQL, ADRs, PDFs, and executable tests. The full machine-readable matrix is also delivered as <code>zyposoft-o0-v1-2-findings-matrix.csv</code>.</p>
+    <details open>
+      <summary>Expand / Collapse All 35 Prior Findings (11 Verified Closed &middot; 20 Design Corrected Untested &middot; 3 Partial &middot; 1 Open)</summary>
+      <div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-01</span> <span class="meta-tag">v1.0 · P0 · Contracts &amp; Signing</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">Envelope &amp; scope separation across MC-01..MC-14</p><p class="ledger-detail"><strong>Evidence:</strong> <code>catalog.json; schemas/MC-01..14.schema.json; vectors/signed_vectors.json</code> &mdash; <strong>Verification:</strong> Automated (validate_pack.py + verify_vectors.mjs). <strong>Next Gate:</strong> Maintain scope pinning in O1 runtime.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-02</span> <span class="meta-tag">v1.0 · P0 · PKI &amp; Enrolment</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Bootstrap claim abuse, CSR PoP, HMAC binding &amp; offline re-enrolment</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §04/§08; adrs/OD03_FOR_APPROVAL.md; schemas/MC-01..02.schema.json</code> &mdash; <strong>Verification:</strong> Static + Synthetic CSR/HMAC (validate_pack.py). <strong>Next Gate:</strong> Execute live CA/KMS race, CSR-swap &amp; expiry tests in O1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-03</span> <span class="meta-tag">v1.0 · P0 · Dual Consent</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Ops-only approval on high-risk actions without customer cryptographic consent</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §05/§20.1; schemas/MC-09.schema.json; adrs/OD04_FOR_APPROVAL.md</code> &mdash; <strong>Verification:</strong> Static + Signed Vector + Independent Adversarial Test. <strong>Next Gate:</strong> Implement site-authoriser key enrolment, custody &amp; revocation in O1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-04</span> <span class="meta-tag">v1.0 · P0 · Command Safety</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">Unconstrained MC-03 job command parameters enabling arbitrary execution</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/MC-03.schema.json; tests/command_params_vectors.json</code> &mdash; <strong>Verification:</strong> Automated (validate_pack.py 9/9 + Independent Malformed MC-03 Test). <strong>Next Gate:</strong> Enforce identical discriminated union in Go agent &amp; helper.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-05</span> <span class="meta-tag">v1.0 · P0 · Agent Privilege</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Agent privilege boundary, Docker socket exposure &amp; local-helper isolation</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §06/§10; adrs/OD04_FOR_APPROVAL.md</code> &mdash; <strong>Verification:</strong> Static Design Inspection. <strong>Next Gate:</strong> Build SO_PEERCRED helper + rootless Podman/Quadlet &amp; run compromised-agent test.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-06</span> <span class="meta-tag">v1.0 · P0 · Cryptography &amp; JCS</span> <span class="badge b-warn">PARTIAL</span></div><p class="ledger-title">RFC 8785 JCS canonicalisation &amp; strict duplicate-key/surrogate rejection</p><p class="ledger-detail"><strong>Evidence:</strong> <code>tests/lib/strict_jcs.mjs; tests/verify_vectors.go (ASCII-only, UTF-8 sort)</code> &mdash; <strong>Verification:</strong> Executed Node 18 (PASS); Go NOT_EXECUTED + Static Inspection. <strong>Next Gate:</strong> Replace restricted Go harness with full RFC 8785 JCS + cross-language Unicode/IEEE-754 corpus.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-07</span> <span class="meta-tag">v1.0 · P0 · Supply Chain &amp; Rollback</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Signed artifact delivery, OCI digest pinning, TUF metadata &amp; rollback recovery</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §07/§12; schemas/MC-05.schema.json; adrs/OD04/OD06_FOR_APPROVAL.md</code> &mdash; <strong>Verification:</strong> Static + MC-05 Global Digest Test. <strong>Next Gate:</strong> Select TUF library (Q04) and test freeze/rollback/interrupted migration in O1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-08</span> <span class="meta-tag">v1.0 · P0 · Durability &amp; Anti-Replay</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Agent SQLite WAL durability, idempotency, replay &amp; monotonic clock watermark</p><p class="ledger-detail"><strong>Evidence:</strong> <code>sql/agent_sqlite_v1_2.sql; tests/sqlite_agent_tests.py</code> &mdash; <strong>Verification:</strong> Executed Python SQLite DDL/Invariant Tests (PASS). <strong>Next Gate:</strong> Run 100-iteration crash, power-loss &amp; clock-rollback harness in Go agent.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-09</span> <span class="meta-tag">v1.0 · P0 · PHI Separation</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Clinical/PHI boundary preventing central console from becoming a PHI store</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §13; schemas/MC-07/13/LOCAL-01.schema.json; adrs/OD07_FOR_APPROVAL.md</code> &mdash; <strong>Verification:</strong> Executed LOCAL-01 PHI Rejection Test (PASS). <strong>Next Gate:</strong> Implement runtime log/diagnostic scrubbing &amp; resolve Q07 retention policy.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-10</span> <span class="meta-tag">v1.0 · P0 · Multi-Tenancy &amp; RLS</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Central PostgreSQL tenant/site isolation, composite FKs &amp; FORCE RLS</p><p class="ledger-detail"><strong>Evidence:</strong> <code>sql/central_tenancy_rls_v1_2.sql (30 tables); adrs/OD05_FOR_APPROVAL.md</code> &mdash; <strong>Verification:</strong> Static SQL Audit (psql NOT_EXECUTED). <strong>Next Gate:</strong> Run PG16 migrations, NOBYPASSRLS role &amp; 100-way Prisma SET LOCAL cross-tenant test.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P0-11</span> <span class="meta-tag">v1.0 · P0 · Governance &amp; ADRs</span> <span class="badge b-fail">OPEN</span></div><p class="ledger-title">Formal human approval of OD01–OD08 ADRs and resolution of Q01–Q07</p><p class="ledger-detail"><strong>Evidence:</strong> <code>adrs/OD01..OD08_FOR_APPROVAL.md (0/8 signed); BRD v1.2 §17.3; TDS v1.2 §19</code> &mdash; <strong>Verification:</strong> Static Inspection (All signature tables blank). <strong>Next Gate:</strong> Named Product/Security/Architecture/Privacy/Clinical owners resolve Q01–Q07 &amp; sign OD01–OD08.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-01</span> <span class="meta-tag">v1.0 · P1 · Product Neutrality</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Multi-product management without modifying core agent trust logic</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §14; adrs/OD06_FOR_APPROVAL.md; schemas/LOCAL-01.product-management.schema.json</code> &mdash; <strong>Verification:</strong> Static + LOCAL-01 Schema Test. <strong>Next Gate:</strong> Execute two-product simulated deployment E2E test with identical compiled agent.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-02</span> <span class="meta-tag">v1.0 · P1 · Scope &amp; Phasing</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">BRD §04 release-phase boundary alignment for OP16–OP20</p><p class="ledger-detail"><strong>Evidence:</strong> <code>Zyposoft_Operations_Platform_Master_BRD_v1.2.pdf §04 (p.12–13) &amp; §17.2 (p.33)</code> &mdash; <strong>Verification:</strong> Static Document Cross-Check. <strong>Next Gate:</strong> None (OP16 O1 minimal gate / O2 full; OP17–OP20 O2 runtime).</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-03</span> <span class="meta-tag">v1.0 · P1 · Test Traceability</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Traceability of 50 master acceptance tests &amp; 70 negative scenarios</p><p class="ledger-detail"><strong>Evidence:</strong> <code>docs/acceptance_tests_trace_v1_2.csv (50); docs/negative_scenarios_trace_v1_2.csv (70)</code> &mdash; <strong>Verification:</strong> CSV Integrity Check (0/120 executed). <strong>Next Gate:</strong> Review proposed phase assignments and execute AT01..50 &amp; NX01..70 in O1–O3.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-04</span> <span class="meta-tag">v1.0 · P1 · Offline Continuity</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Offline licensing, local clinical continuity &amp; non-destructive post-grace mode</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/MC-08.schema.json; adrs/OD08_FOR_APPROVAL.md; TDS v1.2 §15</code> &mdash; <strong>Verification:</strong> Static + MC-08 Vector Verification. <strong>Next Gate:</strong> Approve Q03 grace duration and test extended internet/central outage in O1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-05</span> <span class="meta-tag">v1.0 · P1 · Cert Lifecycle</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Certificate rotation, expiry recovery &amp; revocation handling</p><p class="ledger-detail"><strong>Evidence:</strong> <code>adrs/OD03_FOR_APPROVAL.md; sql/central_tenancy_rls_v1_2.sql (revocation_record)</code> &mdash; <strong>Verification:</strong> Static Design Inspection. <strong>Next Gate:</strong> Test day-45 auto-renew, expired-cert offline recovery &amp; CRL/revocation in O1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-06</span> <span class="meta-tag">v1.0 · P1 · Operator IAM</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Phishing-resistant MFA, OIDC IdP, RBAC &amp; maker-checker enforcement</p><p class="ledger-detail"><strong>Evidence:</strong> <code>adrs/OD05_FOR_APPROVAL.md; sql/central_tenancy_rls_v1_2.sql (CHECK maker_id&lt;&gt;checker_id)</code> &mdash; <strong>Verification:</strong> Static Design &amp; SQL Inspection. <strong>Next Gate:</strong> Select IdP (Q05), implement break-glass &amp; verify RBAC/maker-checker in O1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-07</span> <span class="meta-tag">v1.0 · P1 · Audit Integrity</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Tamper-evident operational audit trail &amp; WORM anchoring</p><p class="ledger-detail"><strong>Evidence:</strong> <code>sql/central_tenancy_rls_v1_2.sql (operational_audit_event, audit_anchor)</code> &mdash; <strong>Verification:</strong> Static SQL Inspection. <strong>Next Gate:</strong> Implement WORM anchor pipeline &amp; tamper-detection test in O1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-08</span> <span class="meta-tag">v1.0 · P1 · Cross-Product Parity</span> <span class="badge b-warn">PARTIAL</span></div><p class="ledger-title">ZypoSono One local interface ownership, locks &amp; device certification boundary</p><p class="ledger-detail"><strong>Evidence:</strong> <code>ZypoSono_One_Master_BRD_v1.5.pdf §21–§22 (p.63–64); docs/ZYPOSONO_LOCAL_INTERFACE_v1_2.md</code> &mdash; <strong>Verification:</strong> Full Source Parity Verified; §22.2 Sign-Off Blank. <strong>Next Gate:</strong> Obtain joint Operations + ZypoSono Clinical/Security sign-off on §22.2.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-09</span> <span class="meta-tag">v1.0 · P1 · Backup &amp; Restore</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Signed backup receipt gate &amp; restore drill tracking</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/MC-14.schema.json; sql/central_tenancy_rls_v1_2.sql (backup_status, restore_drill)</code> &mdash; <strong>Verification:</strong> Static + MC-14 Signed Vector. <strong>Next Gate:</strong> Implement O1 minimal signed backup-receipt pre-upgrade gate.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P1-10</span> <span class="meta-tag">v1.0 · P1 · Support Access</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Time-bounded, site-consented support sessions &amp; diagnostic bundles</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/MC-11.schema.json; schemas/MC-13.schema.json; sql/central_tenancy_rls_v1_2.sql</code> &mdash; <strong>Verification:</strong> Static + MC-11/MC-13 Signed Vectors. <strong>Next Gate:</strong> Implement runtime support session expiry &amp; diagnostic bundle redaction.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P2-01</span> <span class="meta-tag">v1.0 · P2 · Doc Hygiene</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">Cross-reference alignment between Ops BRD and ZypoSono One BRD version</p><p class="ledger-detail"><strong>Evidence:</strong> <code>Zyposoft_Operations_Platform_Master_BRD_v1.2.pdf §14 (ZSO-BRD-MASTER-001 v1.5)</code> &mdash; <strong>Verification:</strong> Static Document Inspection. <strong>Next Gate:</strong> Clean remaining stale v1.1/v1.4 labels tracked under V12-P2-01.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P2-02</span> <span class="meta-tag">v1.0 · P2 · Key Rotation</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Independent key rotation without breaking historical receipt verification</p><p class="ledger-detail"><strong>Evidence:</strong> <code>sql/agent_sqlite_v1_2.sql; tests/sqlite_agent_tests.py</code> &mdash; <strong>Verification:</strong> Executed Python SQLite Rotation Invariant Test (PASS). <strong>Next Gate:</strong> Verify multi-key overlap &amp; retirement in live Go agent.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P2-03</span> <span class="meta-tag">v1.0 · P2 · Offline Delivery</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Air-gapped / USB offline artifact bundle verification</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §12; docs/VERIFICATION_STATUS.md</code> &mdash; <strong>Verification:</strong> Static Design Inspection. <strong>Next Gate:</strong> Test offline USB bundle verification &amp; TUF expiry handling.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P2-04</span> <span class="meta-tag">v1.0 · P2 · Schema Strictness</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">Strict schema_version regex &amp; additionalProperties: false across contracts</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/MC-01..14.schema.json; schemas/AUX-01.job_progress.schema.json</code> &mdash; <strong>Verification:</strong> Programmatic Audit of All 15 Envelope Schemas. <strong>Next Gate:</strong> Add additionalProperties: false to LOCAL-01 root wrapper (V12-P2-03).</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P2-05</span> <span class="meta-tag">v1.0 · P2 · Offboarding</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Customer offboarding &amp; site ownership transfer auditability</p><p class="ledger-detail"><strong>Evidence:</strong> <code>sql/central_tenancy_rls_v1_2.sql (site_ownership_event); BRD v1.2 OP34</code> &mdash; <strong>Verification:</strong> Static SQL &amp; BRD Inspection. <strong>Next Gate:</strong> Implement offboarding &amp; data-export runbook test.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">AUD-P2-06</span> <span class="meta-tag">v1.0 · P2 · Team Simplicity</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Avoidable infrastructure complexity for a small engineering team</p><p class="ledger-detail"><strong>Evidence:</strong> <code>adrs/OD02/OD03/OD05_FOR_APPROVAL.md (Managed OIDC/CA, Go+SQLite, PG16)</code> &mdash; <strong>Verification:</strong> Static Design Review. <strong>Next Gate:</strong> Confirm managed-service selections in Q01 &amp; Q05.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P0-01</span> <span class="meta-tag">v1.1 · P0 · Dual Consent Crypto</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">MC-09 site_authoriser_attestation omitted tenant_id/site_id enabling cross-site replay</p><p class="ledger-detail"><strong>Evidence:</strong> <code>TDS v1.2 §05/§20.1; tests/verify_vectors.mjs:33-37; vectors/negative_signed_vectors.json</code> &mdash; <strong>Verification:</strong> Executed Pack Suite + Independent Re-Signed Outer Envelope Transplant Test (PASS). <strong>Next Gate:</strong> Enforce exact ZOP-SITE-CONSENT-V1\0 binding &amp; key tenant/site check in Go agent.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P1-01</span> <span class="meta-tag">v1.1 · P1 · Contract Envelope</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">AUX-01 job_progress lacked canonical wrapped envelope &amp; signature</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/AUX-01.job_progress.schema.json; catalog.json; examples/AUX-01.example.json</code> &mdash; <strong>Verification:</strong> Automated (validate_pack.py 15/15 + verify_vectors.mjs 15/15). <strong>Next Gate:</strong> None at design layer.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P1-02</span> <span class="meta-tag">v1.1 · P1 · Key Separation</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">Single shared test key across all contracts without key-purpose pinning</p><p class="ledger-detail"><strong>Evidence:</strong> <code>docs/key_purpose_matrix.json; docs/test_key_registry.json (17 keys); vectors/public_keys/</code> &mdash; <strong>Verification:</strong> Executed Pack Suite + Independent Wrong-Purpose MC-05 Test (PASS). <strong>Next Gate:</strong> Maintain strict per-purpose KMS keys in production.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P1-03</span> <span class="meta-tag">v1.1 · P1 · Database DDL</span> <span class="badge b-warn">DESIGN_CORRECTED_BUT_UNTESTED</span></div><p class="ledger-title">Central PostgreSQL DDL lacked full conceptual entities &amp; complete RLS coverage</p><p class="ledger-detail"><strong>Evidence:</strong> <code>sql/central_tenancy_rls_v1_2.sql (30 tables, composite FKs, FORCE RLS)</code> &mdash; <strong>Verification:</strong> Static SQL Audit (psql NOT_EXECUTED). <strong>Next Gate:</strong> Execute DDL &amp; RLS isolation tests on live PostgreSQL 16 in O1 Sprint 1.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P1-04</span> <span class="meta-tag">v1.1 · P1 · Missing Source</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">ZypoSono One Master BRD v1.4/v1.5 source absent in v1.1 pack</p><p class="ledger-detail"><strong>Evidence:</strong> <code>ZypoSono_One_Master_BRD_v1.5.pdf (§21 p.63, §22 p.64); SHA-256 verified</code> &mdash; <strong>Verification:</strong> Full 64-Page Source Read + Checksum Verification (MATCH). <strong>Next Gate:</strong> Obtain human sign-off on §22.2 (tracked in AUD-P1-08).</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P2-01</span> <span class="meta-tag">v1.1 · P2 · Schema Bounds</span> <span class="badge b-warn">PARTIAL</span></div><p class="ledger-title">51 unbounded string fields across MC-01..MC-14 schemas</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/MC-10.schema.json $.properties.body.properties.clinical_approval_ref</code> &mdash; <strong>Verification:</strong> Programmatic 16-Schema Scan + Independent 100KB Payload Test (ACCEPTED). <strong>Next Gate:</strong> Add maxLength (e.g., 128) to MC-10 clinical_approval_ref.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P2-02</span> <span class="meta-tag">v1.1 · P2 · Tooling Compat</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">verify_vectors.mjs failed on Node.js 18 due to import.meta.dirname</p><p class="ledger-detail"><strong>Evidence:</strong> <code>tests/verify_vectors.mjs (uses fileURLToPath(import.meta.url))</code> &mdash; <strong>Verification:</strong> Executed on Node.js v18.20.4 (EXIT 0 PASS). <strong>Next Gate:</strong> None.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">NEW-P2-03</span> <span class="meta-tag">v1.1 · P2 · SQLite Schema</span> <span class="badge b-pass">VERIFIED_CLOSED</span></div><p class="ledger-title">approval_consumption UNIQUE(job_id) blocked multi-grant jobs</p><p class="ledger-detail"><strong>Evidence:</strong> <code>sql/agent_sqlite_v1_2.sql (grant_id PK, non-unique job_id); tests/sqlite_agent_tests.py</code> &mdash; <strong>Verification:</strong> Executed Python SQLite Multi-Grant Test (PASS). <strong>Next Gate:</strong> None.</p></div>
+    </details>
+  </section>
+
+  <section id="section-c">
+    <h2>Section C — Newly Discovered v1.2 Findings</h2>
+    <p>No new P0 or P1 architectural or cryptographic defects were introduced in v1.2. Three P2 hygiene, schema-bound, and harness defects were independently confirmed:</p>
+    <div class="ledger-row"><div class="ledger-head"><span class="fid">V12-P2-01</span> <span class="meta-tag">v1.2 · P2 · Doc Hygiene</span> <span class="badge b-fail">OPEN</span></div><p class="ledger-title">Stale v1.1/v1.4 footers, SQL filename &amp; 14/14 vs 15/15 counts across PDFs</p><p class="ledger-detail"><strong>Evidence:</strong> <code>Ops BRD v1.2 (v1.1 footer, §14 Source label); TDS v1.2 (v1.1 footer, §11/§17/§18); ZypoSono v1.5 (§02/§03/§12.9/§18.4/§20)</code> &mdash; <strong>Remediation:</strong> Synchronize footers, §11 agent_sqlite_v1_2.sql, §17–18 15/15 counts &amp; ZypoSono v1.5 headers.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">V12-P2-02</span> <span class="meta-tag">v1.2 · P2 · Schema Bounds</span> <span class="badge b-fail">OPEN</span></div><p class="ledger-title">Residual unbounded nullable string clinical_approval_ref in MC-10 schema</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/MC-10.schema.json $.properties.body.properties.clinical_approval_ref</code> &mdash; <strong>Remediation:</strong> Add maxLength: 128 to clinical_approval_ref in MC-10.schema.json.</p></div><div class="ledger-row"><div class="ledger-head"><span class="fid">V12-P2-03</span> <span class="meta-tag">v1.2 · P2 · Schema &amp; Harness</span> <span class="badge b-fail">OPEN</span></div><p class="ledger-title">LOCAL-01 root wrapper lacks additionalProperties: false; Go harness unexecuted &amp; ASCII-only</p><p class="ledger-detail"><strong>Evidence:</strong> <code>schemas/LOCAL-01.product-management.schema.json; tests/verify_vectors.go</code> &mdash; <strong>Remediation:</strong> Add top-level additionalProperties: false to LOCAL-01 and replace Go harness with full RFC 8785 JCS.</p></div>
+  </section>
+
+  <section id="section-d">
+    <h2>Section D — Cryptographic Trust &amp; Management Contracts (MC-01–MC-14, AUX-01, LOCAL-01)</h2>
+    <ul>
+      <li><strong>Envelope &amp; Scope Separation (<code>AUD-P0-01</code>, <code>NEW-P1-01</code> CLOSED):</strong> All 15 wire contracts (<code>MC-01..MC-14</code> plus <code>AUX-01</code>) enforce the canonical wrapped envelope, strict <code>schema_version</code> regex <code>^1\.[0-9]+\.[0-9]+$</code>, and <code>additionalProperties: false</code>. Four artifact-scoped contracts (<code>MC-05</code>, <code>MC-06</code>, <code>MC-10</code>, <code>MC-12</code>) omit site identifiers for global reuse; 11 site-scoped contracts require both <code>tenant_id</code> and <code>site_id</code>.</li>
+      <li><strong>Domain Separation &amp; Key-Purpose Pinning (<code>NEW-P1-02</code> CLOSED):</strong> Envelopes sign <code>ZOP-SIG-V1\0&lt;contract_id&gt;\0 || RFC8785_JCS(unsigned)</code>. <code>docs/key_purpose_matrix.json</code> pins all 15 contracts to distinct signer purposes backed by 17 separate PEM public keys in <code>docs/test_key_registry.json</code>.</li>
+      <li><strong>MC-09 Cross-Site Consent Binding (<code>NEW-P0-01</code> CLOSED):</strong> Nested <code>site_authoriser_attestation</code> signs <code>ZOP-SITE-CONSENT-V1\0 || RFC8785_JCS({tenant_id, site_id, body_without_attestation})</code> and enforces key-registry <code>tenant_id</code>/<code>site_id</code> equality. Independent transplant testing with a legitimately re-signed outer Ops envelope confirmed dual rejection (both cryptographic verification and registry binding failed).</li>
+      <li><strong>JCS Canonicalisation (<code>AUD-P0-06</code> PARTIAL):</strong> Node's <code>tests/lib/strict_jcs.mjs</code> passes duplicate-key rejection, lone-surrogate rejection, RFC 8785 UTF-16 non-BMP key ordering, and IEEE-754 formatting. Go's <code>tests/verify_vectors.go</code> remains explicitly ASCII-only (UTF-8 <code>sort.Strings</code> and verbatim <code>json.Number</code>).</li>
+      <li><strong>Schema Bounds (<code>NEW-P2-01</code> PARTIAL):</strong> 50 of 51 previously unbounded strings are now bounded; only <code>MC-10.schema.json</code> <code>clinical_approval_ref</code> remains unbounded (confirmed via 100KB payload acceptance).</li>
+    </ul>
+  </section>
+
+  <section id="section-e">
+    <h2>Section E — Database Architecture (PostgreSQL 16 RLS &amp; Agent SQLite WAL)</h2>
+    <div class="callout">
+      <p><strong>Central PostgreSQL (<code>sql/central_tenancy_rls_v1_2.sql</code> — Static Audit Only):</strong> Expanded to <strong>30 tables</strong> under <code>zop</code> with composite <code>(tenant_id, site_id)</code> foreign keys, <code>UNIQUE(tenant_id, site_id, command_type, idempotency_key)</code> on <code>management_job</code>, <code>CHECK(maker_id &lt;&gt; checker_id)</code> on <code>approval_grant</code>, multi-grant <code>job_approval_grant</code>, and <code>ENABLE</code> + <code>FORCE ROW LEVEL SECURITY</code> on <code>zop.tenant</code> and every tenant-scoped table (excluding global <code>deployment_artifact</code>). Because <code>psql</code> is unavailable in this sandbox, live PG16 execution, non-owner <code>NOBYPASSRLS</code> enforcement, and Prisma <code>SET LOCAL</code> pooled cross-tenant tests remain <code>NOT_EXECUTED</code>.</p>
+    </div>
+    <p><strong>Agent SQLite WAL (<code>sql/agent_sqlite_v1_2.sql</code> — Executed PASS):</strong> Python <code>sqlite3</code> tests passed all DDL, replay uniqueness, key-rotation independence, multi-grant per job (<code>NEW-P2-03</code> closed), duplicate-grant rejection, and integrity checks. Live Go crash-recovery and clock-rollback watermark harnesses remain O1 runtime gates.</p>
+  </section>
+
+  <section id="section-f">
+    <h2>Section F — Privilege Boundaries, Product-Neutrality, Supply Chain &amp; ZypoSono v1.5</h2>
+    <ul>
+      <li><strong>Agent &amp; <code>local-helper</code> (<code>AUD-P0-05</code>):</strong> Unprivileged Go agent communicates over a private Unix socket with <code>SO_PEERCRED</code> to a restricted <code>local-helper</code> using rootless Podman/Quadlet templates (no Docker socket) and independent signature re-verification.</li>
+      <li><strong>Product-Neutrality (<code>AUD-P1-01</code>):</strong> Global <code>MC-05</code> artifact digests decoupled from site-scoped <code>MC-03</code> jobs and generic <code>LOCAL-01</code> hooks allow managing multiple products without modifying core agent trust logic.</li>
+      <li><strong>ZypoSono One v1.5 Compatibility (<code>NEW-P1-04</code> CLOSED, <code>AUD-P1-08</code> PARTIAL):</strong> Full 64-page inspection of <code>ZypoSono_One_Master_BRD_v1.5.pdf</code> confirmed exact parity between §21–§22 (<code>ZSO-OPS-01..15</code> and <code>/local/v1/locks</code>, <code>/readiness</code>, <code>/profiles</code>, <code>/configuration</code>) and <code>LOCAL-01.product-management.schema.json</code>. Clinical lock remains owned fail-closed by ZypoSono; joint sign-off in §22.2 is pending.</li>
+      <li><strong>Offline &amp; Supply Chain (<code>AUD-P0-07</code>, <code>AUD-P1-04</code>):</strong> OCI digest pinning, TUF metadata architecture, and non-destructive offline grace (90-day candidate, <code>WARN_ONLY</code> post-grace) are sound; <code>Q03</code> and <code>Q04</code> require human decision.</li>
+    </ul>
+  </section>
+
+  <section id="section-g">
+    <h2>Section G — Verification Commands &amp; Independent Adversarial Tests</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Test / Command</th>
+          <th>Status</th>
+          <th>Exact Observed Output / Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>python3 tests/validate_pack.py</code></td>
+          <td><span class="badge b-pass">PASS</span></td>
+          <td><code>SCHEMA + STRUCTURAL NEGATIVE TESTS: PASS 15/15; 9/9 typed commands; global artifact reused; synthetic CSR/HMAC verified.</code></td>
+        </tr>
+        <tr>
+          <td><code>python3 tests/sqlite_agent_tests.py</code></td>
+          <td><span class="badge b-pass">PASS</span></td>
+          <td><code>SQLITE TESTS: PASS (DDL + replay uniqueness + key rotation independence + receipt/progress + integrity)</code></td>
+        </tr>
+        <tr>
+          <td><code>python3 tests/local_api_contract_tests.py</code></td>
+          <td><span class="badge b-pass">PASS</span></td>
+          <td><code>LOCAL-01 SCHEMA TESTS: PASS 5/5 request/response definitions + PHI-field rejection (design only).</code></td>
+        </tr>
+        <tr>
+          <td><code>node tests/verify_vectors.mjs</code> (Node v18.20.4)</td>
+          <td><span class="badge b-pass">PASS</span></td>
+          <td><code>NODE v1.2 TEST VECTOR SUITE: PASS 15/15 signed contracts + 2 adversarial signed negatives + duplicate-key/lone-surrogate checks.</code></td>
+        </tr>
+        <tr>
+          <td><code>go run tests/verify_vectors.go .</code></td>
+          <td><span class="badge b-warn">NOT_EXECUTED</span></td>
+          <td>Exit 127: <code>go: command not found</code>. Static audit confirmed ASCII-only fixture verifier (UTF-8 sort, raw <code>json.Number</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>Independent:</strong> Source SHA-256 Checksums</td>
+          <td><span class="badge b-pass">MATCH (5/5)</span></td>
+          <td>All 5 v1.2 bundle files match <code>docs/source_artifact_checksums_v1_2.sha256</code> verbatim.</td>
+        </tr>
+        <tr>
+          <td><strong>Independent:</strong> MC-09 Cross-Site Transplant (Re-Signed Outer Ops Envelope)</td>
+          <td><span class="badge b-pass">PASS</span></td>
+          <td>Site B outer Ops signature valid (<code>true</code>), but nested Site A attestation failed both crypto verification (<code>false</code>) and registry tenant/site binding (<code>false</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>Independent:</strong> Wrong-Purpose MC-05 &amp; Tampered MC-03</td>
+          <td><span class="badge b-pass">PASS</span></td>
+          <td><code>entitlement_signer</code> key rejected on <code>MC-05</code>; tampered <code>MC-03</code> under <code>ZOP-SIG-V1\0MC-03\0</code> failed verification (baseline <code>true</code>, tampered <code>false</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>Independent:</strong> Strict JCS Edge Cases &amp; Malformed MC-03</td>
+          <td><span class="badge b-pass">PASS</span></td>
+          <td>Rejected nested duplicate keys, lone surrogate <code>\uD800</code>, unknown command, extra param, and empty params; passed UTF-16 non-BMP sort &amp; IEEE-754 edge cases.</td>
+        </tr>
+        <tr>
+          <td><strong>Independent:</strong> MC-10 100KB <code>clinical_approval_ref</code></td>
+          <td><span class="badge b-fail">DEFECT</span></td>
+          <td>100,000-character string accepted by <code>MC-10.schema.json</code> — confirms residual <code>V12-P2-02</code> / <code>NEW-P2-01</code> bound gap.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="section-h">
+    <h2>Section H — OD01–OD08 Decision Register &amp; Open Questions (Q01–Q07)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ADR</th>
+          <th>Topic</th>
+          <th>Design</th>
+          <th>Approval</th>
+          <th>Open Dependency &amp; Required Approvers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>OD01</strong></td><td>Authority &amp; clinical independence</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td><strong>Q06</strong> &mdash; Product Sponsor; Architecture Authority; Clinical Product Owner</td></tr>
+        <tr><td><strong>OD02</strong></td><td>Agent runtime &amp; protected identity</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td><strong>Q02</strong> &mdash; Security Authority; Engineering Owner</td></tr>
+        <tr><td><strong>OD03</strong></td><td>Private PKI, enrolment &amp; expiry</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td><strong>Q01</strong> &mdash; Security Authority; Engineering Owner</td></tr>
+        <tr><td><strong>OD04</strong></td><td>Job signing &amp; dual customer consent</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td><strong>Q04</strong> &mdash; Security Authority; Product Sponsor</td></tr>
+        <tr><td><strong>OD05</strong></td><td>Operator IAM, tenancy &amp; RLS</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td><strong>Q05</strong> &mdash; Security Authority; Architecture Authority</td></tr>
+        <tr><td><strong>OD06</strong></td><td>Product-neutral artifact lifecycle</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td>OCI/rootless &amp; O1/O2 scope &mdash; Architecture Authority; Product Sponsor</td></tr>
+        <tr><td><strong>OD07</strong></td><td>Telemetry &amp; privacy separation</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td><strong>Q07</strong> &mdash; Privacy/Legal Owner; Clinical Owner</td></tr>
+        <tr><td><strong>OD08</strong></td><td>Offline entitlement &amp; continuity</td><td><span class="badge b-pass">DESIGN_COMPLETE</span></td><td><span class="badge b-fail">NOT_APPROVED</span></td><td><strong>Q03</strong> &mdash; Product Sponsor; Privacy/Legal Owner; Clinical Owner</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="section-i">
+    <h2>Section I — BRD Domain &amp; Traceability Verification</h2>
+    <p>All <strong>36 Operations Platform domains</strong> (<code>OP01–OP36</code>) and <strong>41 ZypoSono One domains</strong> (<code>M01–M41</code>) are reconciled with clean O1/O2 boundaries (<code>OP16</code> split cleanly; <code>OP17–OP20</code> deferred to O2 runtime). Traceability CSVs account for all <strong>50 master acceptance tests</strong> (<code>O1: 24</code>, <code>O2: 24</code>, <code>O3: 2</code>), <strong>70 negative scenarios</strong> (<code>O1: 53</code>, <code>O2: 17</code>), and <strong>18 O0 contract tests</strong> (<code>CT-O0-01..18</code>). All 120 AT/NX scenarios remain honestly marked <code>NOT_EXECUTED</code>.</p>
+  </section>
+
+  <section id="section-j">
+    <h2>Section J — Machine-Readable Verdict Block</h2>
+<pre>AUDIT_TARGET: Zyposoft_Operations_Platform_O0_v1.2_COMPLETE_REMEDIATION
+AUDIT_DATE: 2026-11-24
+O0_DESIGN_READINESS_FOR_O1_CODING: GO_WITH_CONDITIONS
+O1_RUNTIME_VERIFIED: NOT_STARTED
+CLINICAL_PRODUCTION_READY: NO_GO
+PRIOR_FINDINGS_TOTAL: 35
+PRIOR_FINDINGS_VERIFIED_CLOSED: 11
+PRIOR_FINDINGS_DESIGN_CORRECTED_BUT_UNTESTED: 20
+PRIOR_FINDINGS_PARTIAL: 3
+PRIOR_FINDINGS_OPEN: 1
+PRIOR_FINDINGS_REGRESSED: 0
+NEW_V1_2_FINDINGS_P0: 0
+NEW_V1_2_FINDINGS_P1: 0
+NEW_V1_2_FINDINGS_P2: 3
+ADRS_DESIGN_COMPLETE: 8
+ADRS_FORMALLY_APPROVED: 0
+OPEN_QUESTIONS_UNRESOLVED: 7
+PACK_TESTS_PASSED: 4
+PACK_TESTS_NOT_EXECUTED: 1
+PACK_TESTS_FAILED: 0
+INDEPENDENT_ADVERSARIAL_TESTS_PASSED: 5
+INDEPENDENT_ADVERSARIAL_DEFECTS_CONFIRMED: 1
+BINDING_CONDITIONS_COUNT: 4</pre>
+  </section>
+
+  <p class="footer-note">Prepared independently in strict read-only audit mode. No source artifacts were modified and no human approvals were fabricated.</p>
+</main>
+</body>
+</html>

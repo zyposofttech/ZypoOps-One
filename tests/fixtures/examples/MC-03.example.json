@@ -1,0 +1,35 @@
+{
+  "contract_id": "MC-03",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "tenant_id": "11111111-1111-4111-8111-111111111111",
+  "site_id": "22222222-2222-4222-8222-222222222222",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "job_id": "66666666-6666-4666-8666-666666666666",
+    "installation_id": "33333333-3333-4333-8333-333333333333",
+    "agent_id": "44444444-4444-4444-8444-444444444444",
+    "command_type": "DEPLOY_RELEASE",
+    "params": {
+      "manifest_sha256": "e2c90062b8736933de971b430d097adda5f4babc55994808ebe7c68f799dde91",
+      "product_key": "zyposono",
+      "release_channel": "pilot"
+    },
+    "sequence": 1,
+    "nonce": "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
+    "idempotency_key": "66666666-6666-4666-8666-666666666666",
+    "issued_at": "2026-11-24T05:00:00Z",
+    "not_before": "2026-11-24T05:00:00Z",
+    "expires_at": "2027-11-24T05:00:00Z",
+    "min_agent_version": "1.1.0",
+    "approval_grant_ids": [
+      "66666666-6666-4666-8666-666666666666"
+    ],
+    "preconditions": {}
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "test-only-ops-job",
+    "value": "XB1nxtLzPj9JXa1FmbuZEHqUHfFg6xRGBobDuA7fTEPq6k6S-w--4krh5IMQbAIzzCRl_ly3-y54jaSTArXQCw"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "contract_id": "MC-02",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "tenant_id": "11111111-1111-4111-8111-111111111111",
+  "site_id": "22222222-2222-4222-8222-222222222222",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "claim_id": "66666666-6666-4666-8666-666666666666",
+    "token_proof": "gyaXjUJZPyDzJfnheXXOU9WFVRpQXONL6TmAqh3dVUo",
+    "claim_nonce": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "installer_id": "55555555-5555-4555-8555-555555555555",
+    "csr_pem": "-----BEGIN CERTIFICATE REQUEST-----\nMIGjMFcCAQAwJDEiMCAGA1UEAwwZVEVTVC1PTkxZOiBaT1Agc2l0ZSBhZ2VudDAq\nMAUGAytlcAMhAFV9q4smzRMGVli45v/IZt1BS7Sz95189PJ2iJCU0rNFoAAwBQYD\nK2VwA0EAYvPyJmLgHPU8GK9tx/2F72ycrSIwVFEusPojGWf52oRjxRNpTjPQ/BZY\nU0u7v1CwS4NkApz/lBFiYjQyS1fgAw==\n-----END CERTIFICATE REQUEST-----\n",
+    "host_evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "agent_version": "1.1.0",
+    "installation_id": "33333333-3333-4333-8333-333333333333",
+    "csr_sha256": "cd6c2616ffd28d03300383ef0887e1041916c4e560e0ac08f3367226d3f288cc",
+    "key_algorithm": "Ed25519"
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "test-only-agent-enrolment-pop",
+    "value": "H8t-J9vpZR-_2nToIq__g8eQ31ImyVoPRnwa7JZsKp7dC_vTbcRgbl8U5-uGvrvB8bf4na3x87lxw5Q1yanVDQ"
+  }
+}

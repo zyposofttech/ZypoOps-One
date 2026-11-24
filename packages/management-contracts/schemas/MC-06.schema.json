@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zyposoft:ops:contracts:mc-06:v1.1.0",
+  "title": "MC-06 v1.2 device profile (certification remains O2)",
+  "description": "Remediated candidate contract. Syntax validation does NOT prove trust; enforce detached cryptographic, policy and state checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract_id": {
+      "const": "MC-06"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "manufacturer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "exact_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "software_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "option_fingerprint_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "adapter_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 48,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]{3,40}$"
+          }
+        },
+        "sop_classes": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 96,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^([0-2])(?:\\.(?:0|[1-9][0-9]*))+$",
+            "maxLength": 80
+          }
+        },
+        "measurement_map_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "fixture_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "certification_state": {
+          "enum": [
+            "DISCOVERED",
+            "LAB_TESTING",
+            "PARTIAL",
+            "VERIFIED",
+            "MANUAL_ONLY",
+            "UNSUPPORTED",
+            "RECALLED"
+          ]
+        },
+        "transfer_syntaxes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9.]{3,80}$"
+          },
+          "minItems": 0,
+          "maxItems": 64,
+          "uniqueItems": true
+        },
+        "dicom_roles": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "SCU",
+              "SCP",
+              "MWL_SCU",
+              "MWL_SCP",
+              "STORAGE_SCU",
+              "STORAGE_SCP",
+              "SR_SOURCE"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true
+        },
+        "witness_id": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "last_verified_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "adapter_version": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "manufacturer",
+        "exact_model",
+        "software_version",
+        "option_fingerprint_sha256",
+        "adapter_sha256",
+        "capabilities",
+        "sop_classes",
+        "measurement_map_version",
+        "fixture_sha256",
+        "certification_state",
+        "transfer_syntaxes",
+        "dicom_roles",
+        "witness_id",
+        "last_verified_at",
+        "adapter_version"
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "const": "Ed25519"
+        },
+        "kid": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{2,79}$"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{80,128}$"
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "value"
+      ]
+    }
+  },
+  "required": [
+    "contract_id",
+    "schema_version",
+    "message_id",
+    "sent_at",
+    "body",
+    "signature"
+  ]
+}

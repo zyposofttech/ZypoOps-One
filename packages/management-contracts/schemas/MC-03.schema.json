@@ -1,0 +1,470 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zyposoft:ops:contracts:mc-03:v1.1.0",
+  "title": "MC-03 v1.1 proposed interface contract",
+  "description": "Remediated candidate contract. Syntax validation does NOT prove trust; enforce detached cryptographic, policy and state checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "contract_id": {
+      "const": "MC-03"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "site_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "body": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "installation_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "agent_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "command_type": {
+          "enum": [
+            "REQUEST_HEALTH",
+            "APPLY_SITE_CONFIG",
+            "DEPLOY_RELEASE",
+            "VERIFY_DEPLOYMENT",
+            "ROTATE_AGENT_CERT",
+            "APPLY_DEVICE_PROFILE",
+            "COLLECT_DIAGNOSTICS",
+            "PAUSE_ROLLOUT",
+            "REVOKE_SUPPORT_SESSION"
+          ]
+        },
+        "params": {
+          "type": "object"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{22,128}$"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "min_agent_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "approval_grant_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "minItems": 0,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        "preconditions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "observed_revision": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "maintenance_window_id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": []
+        }
+      },
+      "required": [
+        "job_id",
+        "installation_id",
+        "agent_id",
+        "command_type",
+        "params",
+        "sequence",
+        "nonce",
+        "idempotency_key",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "min_agent_version",
+        "approval_grant_ids",
+        "preconditions"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "REQUEST_HEALTH"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {},
+                "required": []
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "APPLY_SITE_CONFIG"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "config_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "config_revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "config_sha256",
+                  "config_revision"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "DEPLOY_RELEASE"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "manifest_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "product_key": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9-]{1,48}$"
+                  },
+                  "release_channel": {
+                    "enum": [
+                      "pilot",
+                      "stable",
+                      "hotfix"
+                    ]
+                  }
+                },
+                "required": [
+                  "manifest_sha256",
+                  "product_key",
+                  "release_channel"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "VERIFY_DEPLOYMENT"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "deployment_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "manifest_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  }
+                },
+                "required": [
+                  "deployment_id",
+                  "manifest_sha256"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "ROTATE_AGENT_CERT"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "rotation_request_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "csr_challenge_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  }
+                },
+                "required": [
+                  "rotation_request_id",
+                  "csr_challenge_sha256"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "APPLY_DEVICE_PROFILE"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "profile_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "device_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "profile_sha256",
+                  "device_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "COLLECT_DIAGNOSTICS"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "diagnostic_scope": {
+                    "enum": [
+                      "HEALTH",
+                      "GATEWAY_CONNECTIVITY",
+                      "STORAGE"
+                    ]
+                  }
+                },
+                "required": [
+                  "session_id",
+                  "diagnostic_scope"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "PAUSE_ROLLOUT"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "rollout_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "reason_code": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]{3,40}$"
+                  }
+                },
+                "required": [
+                  "rollout_id",
+                  "reason_code"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "command_type": {
+                "const": "REVOKE_SUPPORT_SESSION"
+              }
+            },
+            "required": [
+              "command_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "session_id"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "alg": {
+          "const": "Ed25519"
+        },
+        "kid": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{2,79}$"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{80,128}$"
+        }
+      },
+      "required": [
+        "alg",
+        "kid",
+        "value"
+      ]
+    }
+  },
+  "required": [
+    "contract_id",
+    "schema_version",
+    "message_id",
+    "tenant_id",
+    "site_id",
+    "sent_at",
+    "body",
+    "signature"
+  ]
+}

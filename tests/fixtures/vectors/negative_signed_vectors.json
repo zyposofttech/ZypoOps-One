@@ -1,0 +1,88 @@
+[
+  {
+    "id": "CT-O0-17-CROSS_SITE",
+    "reason": "Outer Ops valid but site-authoriser attestation bound to Site A",
+    "expected_rejection": "SITE_CONSENT_SCOPE_MISMATCH",
+    "message": {
+      "contract_id": "MC-09",
+      "schema_version": "1.2.0",
+      "message_id": "66666666-6666-4666-8666-666666666666",
+      "tenant_id": "88888888-8888-4888-8888-888888888888",
+      "site_id": "99999999-9999-4999-8999-999999999999",
+      "sent_at": "2026-11-24T05:00:00Z",
+      "body": {
+        "grant_id": "66666666-6666-4666-8666-666666666666",
+        "operation": "DEPLOY_RELEASE",
+        "operator_id": "55555555-5555-4555-8555-555555555555",
+        "site_authoriser_id": "66666666-6666-4666-8666-666666666666",
+        "resource_scope": [
+          "zyposono"
+        ],
+        "valid_from": "2026-11-24T05:00:00Z",
+        "valid_until": "2027-11-24T05:00:00Z",
+        "maker_id": "77777777-7777-4777-8777-777777777777",
+        "checker_id": "88888888-8888-4888-8888-888888888888",
+        "purpose": "DEPLOYMENT",
+        "target_digest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "site_authoriser_attestation": {
+          "alg": "Ed25519",
+          "kid": "test-only-site-authoriser-site-a",
+          "value": "AWJTplZm4D2bax2S2UvFK3DnlY59t3UIl1qZEkctQau5Nv_PCbDAc9BHjl0Ztb4sKr61_hi_qTlsKNJsLJudAg"
+        }
+      },
+      "signature": {
+        "alg": "Ed25519",
+        "kid": "test-only-ops-approval",
+        "value": "UjVVty6awrwkd2lkZMyq1rN82frfE6wxa9bJh6WovoDqBXd91bRteOKcGOMALmu5K1Smzt1oG_rs5oC-ETHDCA"
+      }
+    }
+  },
+  {
+    "id": "CT-O0-07-WRONG_PURPOSE",
+    "reason": "Ed25519 signature mathematically valid but signer has ops_job purpose, not release_signer",
+    "expected_rejection": "KEY_PURPOSE_MISMATCH",
+    "message": {
+      "contract_id": "MC-05",
+      "schema_version": "1.2.0",
+      "message_id": "66666666-6666-4666-8666-666666666666",
+      "sent_at": "2026-11-24T05:00:00Z",
+      "body": {
+        "product_id": "zyposono",
+        "release_id": "zso-1.1.0",
+        "topology": "SINGLE_SITE_LAN",
+        "revision": 1,
+        "components": [
+          {
+            "name": "clinical-api",
+            "oci_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "host_os": "ubuntu-lts",
+        "minimum_disk_gb": 50,
+        "migration_policy": "NO_DB_CHANGE",
+        "backup_evidence_required": true,
+        "required_locks": [
+          "CLINICAL_SIGNOFF",
+          "ACTIVE_ACQUISITION"
+        ],
+        "health_probes": [
+          {
+            "name": "app-readiness",
+            "probe_type": "HTTP",
+            "target": "http://127.0.0.1:3333/health/ready"
+          }
+        ],
+        "cpu_arch": "amd64",
+        "min_memory_mb": 2048,
+        "min_agent_version": "1.1.0",
+        "expires_at": "2027-11-24T05:00:00Z",
+        "sbom_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "signature": {
+        "alg": "Ed25519",
+        "kid": "test-only-ops-job",
+        "value": "IOQfnTFa7R1YosOJV1dBjGW-fGSseElxEmikHPmnUa1wgWg8T8HT8ubO5-XgGT6vJlPQJb5Mz1r0hO6wQG1CCw"
+      }
+    }
+  }
+]

@@ -1,0 +1,71 @@
+[
+  {
+    "command_type": "REQUEST_HEALTH",
+    "valid_params": {},
+    "empty_params_must_reject": false
+  },
+  {
+    "command_type": "APPLY_SITE_CONFIG",
+    "valid_params": {
+      "config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "config_revision": 1
+    },
+    "empty_params_must_reject": true
+  },
+  {
+    "command_type": "DEPLOY_RELEASE",
+    "valid_params": {
+      "manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "product_key": "zyposono",
+      "release_channel": "pilot"
+    },
+    "empty_params_must_reject": true
+  },
+  {
+    "command_type": "VERIFY_DEPLOYMENT",
+    "valid_params": {
+      "deployment_id": "66666666-6666-4666-8666-666666666666",
+      "manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "empty_params_must_reject": true
+  },
+  {
+    "command_type": "ROTATE_AGENT_CERT",
+    "valid_params": {
+      "rotation_request_id": "66666666-6666-4666-8666-666666666666",
+      "csr_challenge_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "empty_params_must_reject": true
+  },
+  {
+    "command_type": "APPLY_DEVICE_PROFILE",
+    "valid_params": {
+      "profile_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "device_id": "66666666-6666-4666-8666-666666666666"
+    },
+    "empty_params_must_reject": true
+  },
+  {
+    "command_type": "COLLECT_DIAGNOSTICS",
+    "valid_params": {
+      "session_id": "66666666-6666-4666-8666-666666666666",
+      "diagnostic_scope": "HEALTH"
+    },
+    "empty_params_must_reject": true
+  },
+  {
+    "command_type": "PAUSE_ROLLOUT",
+    "valid_params": {
+      "rollout_id": "66666666-6666-4666-8666-666666666666",
+      "reason_code": "SAFETY_HOLD"
+    },
+    "empty_params_must_reject": true
+  },
+  {
+    "command_type": "REVOKE_SUPPORT_SESSION",
+    "valid_params": {
+      "session_id": "66666666-6666-4666-8666-666666666666"
+    },
+    "empty_params_must_reject": true
+  }
+]

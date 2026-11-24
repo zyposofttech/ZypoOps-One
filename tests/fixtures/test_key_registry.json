@@ -1,0 +1,108 @@
+{
+  "test-only-ops-identity": {
+    "alg": "Ed25519",
+    "purpose": "ops_identity",
+    "public_key_file": "vectors/public_keys/test-only-ops-identity.pem",
+    "test_only": true
+  },
+  "test-only-agent-enrolment-pop": {
+    "alg": "Ed25519",
+    "purpose": "agent_enrolment_pop",
+    "public_key_file": "vectors/public_keys/test-only-agent-enrolment-pop.pem",
+    "test_only": true,
+    "tenant_id": "11111111-1111-4111-8111-111111111111",
+    "site_id": "22222222-2222-4222-8222-222222222222"
+  },
+  "test-only-ops-job": {
+    "alg": "Ed25519",
+    "purpose": "ops_job",
+    "public_key_file": "vectors/public_keys/test-only-ops-job.pem",
+    "test_only": true
+  },
+  "test-only-agent-receipt": {
+    "alg": "ES256",
+    "purpose": "agent_receipt",
+    "public_key_file": "vectors/public_keys/test-only-agent-receipt.pem",
+    "test_only": true
+  },
+  "test-only-release-signer": {
+    "alg": "Ed25519",
+    "purpose": "release_signer",
+    "public_key_file": "vectors/public_keys/test-only-release-signer.pem",
+    "test_only": true
+  },
+  "test-only-device-profile-signer": {
+    "alg": "Ed25519",
+    "purpose": "device_profile_signer",
+    "public_key_file": "vectors/public_keys/test-only-device-profile-signer.pem",
+    "test_only": true
+  },
+  "test-only-agent-telemetry": {
+    "alg": "ES256",
+    "purpose": "agent_telemetry",
+    "public_key_file": "vectors/public_keys/test-only-agent-telemetry.pem",
+    "test_only": true
+  },
+  "test-only-entitlement-signer": {
+    "alg": "Ed25519",
+    "purpose": "entitlement_signer",
+    "public_key_file": "vectors/public_keys/test-only-entitlement-signer.pem",
+    "test_only": true
+  },
+  "test-only-ops-approval": {
+    "alg": "Ed25519",
+    "purpose": "ops_approval",
+    "public_key_file": "vectors/public_keys/test-only-ops-approval.pem",
+    "test_only": true
+  },
+  "test-only-release-recall": {
+    "alg": "Ed25519",
+    "purpose": "release_recall",
+    "public_key_file": "vectors/public_keys/test-only-release-recall.pem",
+    "test_only": true
+  },
+  "test-only-ops-support": {
+    "alg": "Ed25519",
+    "purpose": "ops_support",
+    "public_key_file": "vectors/public_keys/test-only-ops-support.pem",
+    "test_only": true
+  },
+  "test-only-clinical-distribution": {
+    "alg": "Ed25519",
+    "purpose": "clinical_distribution",
+    "public_key_file": "vectors/public_keys/test-only-clinical-distribution.pem",
+    "test_only": true
+  },
+  "test-only-agent-diagnostics": {
+    "alg": "ES256",
+    "purpose": "agent_diagnostics",
+    "public_key_file": "vectors/public_keys/test-only-agent-diagnostics.pem",
+    "test_only": true
+  },
+  "test-only-agent-backup-receipt": {
+    "alg": "ES256",
+    "purpose": "agent_backup_receipt",
+    "public_key_file": "vectors/public_keys/test-only-agent-backup-receipt.pem",
+    "test_only": true
+  },
+  "test-only-agent-progress": {
+    "alg": "ES256",
+    "purpose": "agent_progress",
+    "public_key_file": "vectors/public_keys/test-only-agent-progress.pem",
+    "test_only": true
+  },
+  "test-only-site-authoriser-site-a": {
+    "alg": "Ed25519",
+    "purpose": "site_authoriser",
+    "public_key_file": "vectors/public_keys/test-only-site-authoriser-site-a.pem",
+    "tenant_id": "11111111-1111-4111-8111-111111111111",
+    "site_id": "22222222-2222-4222-8222-222222222222",
+    "test_only": true
+  },
+  "test-only-clinical-package-owner": {
+    "alg": "Ed25519",
+    "purpose": "clinical_owner",
+    "public_key_file": "vectors/public_keys/test-only-clinical-package-owner.pem",
+    "test_only": true
+  }
+}

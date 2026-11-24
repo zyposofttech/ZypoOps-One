@@ -1,0 +1,25 @@
+{
+  "contract_id": "MC-12",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "package_type": "FETAL_REFERENCE",
+    "package_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "clinical_owner_signature": {
+      "alg": "Ed25519",
+      "kid": "test-only-clinical-package-owner",
+      "value": "iVIkQ3LOSdECBkElmOVjq9sGnq1d0oHRDc0TlskSuYakmRB2P3qNmcy-xoRu7XAeBX1dmrIhfvgOuglXxj72DA"
+    },
+    "intended_use": "Clinical reference distribution after independent approval",
+    "reference_version": "demo-value",
+    "validation_evidence_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "valid_from": "2026-11-24T05:00:00Z",
+    "valid_until": "2027-11-24T05:00:00Z"
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "test-only-clinical-distribution",
+    "value": "_CZPCNbQmueNseLq4vUUWucuJUxohBUXWDPTBTigJd5jPZRi68UGq9zwvgMje9ESkvV-f-sw_NFxJyq1fn9HBQ"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "contract_id": "MC-08",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "tenant_id": "11111111-1111-4111-8111-111111111111",
+  "site_id": "22222222-2222-4222-8222-222222222222",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "entitlement_id": "66666666-6666-4666-8666-666666666666",
+    "product_id": "zyposono",
+    "features": [
+      "REPORTING"
+    ],
+    "issued_at": "2026-11-24T05:00:00Z",
+    "expires_at": "2027-11-24T05:00:00Z",
+    "offline_grace_days": 90,
+    "policy_epoch": 1,
+    "not_before": "2026-11-24T05:00:00Z",
+    "post_grace_mode": "WARN_ONLY"
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "kid": "test-only-entitlement-signer",
+    "value": "SDhyf0GU_lkj5PvVHIO0UlF8j91ZBc4kB87ZHhw8hlp4SVMW7qvSjLrBl5BnVxEoT57rTgNyh-Na7jjHxnSHCA"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "contract_id": "MC-14",
+  "schema_version": "1.2.0",
+  "message_id": "66666666-6666-4666-8666-666666666666",
+  "tenant_id": "11111111-1111-4111-8111-111111111111",
+  "site_id": "22222222-2222-4222-8222-222222222222",
+  "sent_at": "2026-11-24T05:00:00Z",
+  "body": {
+    "dataset_categories": [
+      "APP_CONFIG"
+    ],
+    "backup_age_seconds": 60,
+    "last_success_at": "2026-11-24T05:00:00Z",
+    "encrypted": true,
+    "integrity_verified": true,
+    "last_restore_test_at": "2026-11-24T05:00:00Z",
+    "error_state": "NONE",
+    "backup_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "signature": {
+    "alg": "ES256",
+    "kid": "test-only-agent-backup-receipt",
+    "value": "_3P3g42xGPPw67aaFhV9tLUX-chetOkgSr9ho2av8bH2RC2equZaAh84hsuYVLhAqf3u6lujGcjfDT8Xf3Wc7g"
+  }
+}
