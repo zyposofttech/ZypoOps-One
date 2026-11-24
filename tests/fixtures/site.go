@@ -7,9 +7,9 @@ type Site struct{Config policy.Config;priv map[string]ed25519.PrivateKey}
 func NewSite()*Site{
  digest,err:=policy.Digest(Example("MC-05"));if err!=nil{panic(err)}
  s:=&Site{Config:policy.Config{Scope:Scope,Installation:Install,Agent:AgentID,Version:"1.2.0",Trust:Trust(),TestArtifacts:map[string]string{digest:"zyposono"},Preflight:func(_ string,_ []string)bool{return true}},priv:map[string]ed25519.PrivateKey{}}
- for kid,purpose:=range map[string]string{"mock-job":"ops_job","rotated-job":"ops_job","mock-receipt":"agent_receipt","mock-grant":"ops_approval","mock-local":"site_authoriser"}{
+ for kid,purpose:=range map[string]string{"mock-release":"release_signer","mock-backup":"agent_backup_receipt","mock-job":"ops_job","rotated-job":"ops_job","mock-receipt":"agent_receipt","mock-grant":"ops_approval","mock-local":"site_authoriser"}{
   seed:=sha256.Sum256([]byte("PUBLIC deterministic TEST fixture only/"+kid));key:=ed25519.NewKeyFromSeed(seed[:]);s.priv[kid]=key
-  rec:=signing.Key{Alg:"Ed25519",Purpose:purpose,Public:key.Public()};if purpose=="agent_receipt"||purpose=="site_authoriser"{rec.Scope=Scope};s.Config.Trust[kid]=rec
+  rec:=signing.Key{Alg:"Ed25519",Purpose:purpose,Public:key.Public()};if purpose=="agent_backup_receipt"||purpose=="agent_receipt"||purpose=="site_authoriser"{rec.Scope=Scope};s.Config.Trust[kid]=rec
  };return s
 }
 func(s *Site)ReceiptKey()(string,crypto.PrivateKey,error){return "mock-receipt",s.priv["mock-receipt"],nil}

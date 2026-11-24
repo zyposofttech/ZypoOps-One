@@ -1,24 +1,20 @@
 //go:build linux
 
 package helper
-import("bufio";"context";"encoding/binary";"errors";"io";"net";"os";"path/filepath";"syscall";"time";"golang.org/x/sys/unix";contracts "zyposoft.local/operations/packages/management-contracts")
-// Each connection carries one big-endian length-prefixed JSON request and receives one bounded status line.
+import("bufio";"context";"encoding/binary";"encoding/json";"io";"net";"time";contracts "zyposoft.local/operations/packages/management-contracts";"zyposoft.local/operations/packages/unixpeer")
 func(h *Helper)Serve(ctx context.Context,path string)error{
- dir,err:=os.Lstat(filepath.Dir(path));if err!=nil{return err}
- owner,ok:=dir.Sys().(*syscall.Stat_t);if !ok||!dir.IsDir()||dir.Mode().Perm()&0022!=0||owner.Uid!=uint32(os.Geteuid()){return errors.New("UNSAFE_SOCKET_DIRECTORY")}
- listener,err:=net.ListenUnix("unix",&net.UnixAddr{Name:path,Net:"unix"});if err!=nil{return err};defer listener.Close()
- if err=os.Chmod(path,0660);err!=nil{return err}
- stop:=context.AfterFunc(ctx,func(){listener.Close()});defer stop()
- for{conn,err:=listener.AcceptUnix();if err!=nil{if ctx.Err()!=nil{return nil};return err};h.handleConn(conn)}
+ l,err:=unixpeer.Listen(path);if err!=nil{return err};defer l.Close()
+ stop:=context.AfterFunc(ctx,func(){l.Close()});defer stop()
+ for{c,err:=l.AcceptUnix();if err!=nil{if ctx.Err()!=nil{return nil};return err};h.handleConn(ctx,c)}
 }
-func(h *Helper)handleConn(conn *net.UnixConn){
- defer conn.Close();if conn.SetDeadline(time.Now().Add(2*time.Second))!=nil{return}
- code:="UNAUTHORISED_PEER"
- descriptor,err:=conn.SyscallConn();var peer *unix.Ucred;var socketErr error
- if err==nil{err=descriptor.Control(func(fd uintptr){peer,socketErr=unix.GetsockoptUcred(int(fd),unix.SOL_SOCKET,unix.SO_PEERCRED)})}
- if err==nil&&socketErr==nil&&peer!=nil&&peer.Uid==h.uid&&peer.Gid==h.gid{
-  code="INVALID_REQUEST";reader:=bufio.NewReader(conn);var size uint32
-  if err=binary.Read(reader,binary.BigEndian,&size);err==nil&&size>0&&size<=contracts.MaxBytes{raw:=make([]byte,size);if _,err=io.ReadFull(reader,raw);err==nil{code=h.apply(raw,peer.Uid,peer.Gid)}}
- }
- _,_=io.WriteString(conn,code+"\n")
+func(h *Helper)handleConn(parent context.Context,c *net.UnixConn){
+ defer c.Close();ctx,cancel:=context.WithTimeout(parent,4*time.Second);defer cancel()
+ stop:=context.AfterFunc(ctx,func(){c.Close()});defer stop();deadline,_:=ctx.Deadline()
+ if c.SetDeadline(deadline)!=nil{return}
+ if (unixpeer.Peer{UID:h.uid,GID:h.gid}).Check(c)!=nil{_,_=io.WriteString(c,"UNAUTHORISED_PEER\n");return}
+ reader:=bufio.NewReader(c);var size uint32
+ if binary.Read(reader,binary.BigEndian,&size)!=nil||size==0||size>contracts.MaxBytes{_,_=io.WriteString(c,"INVALID_REQUEST\n");return}
+ data:=make([]byte,size);if _,err:=io.ReadFull(reader,data);err!=nil{return}
+ if h.products!=nil{_ = json.NewEncoder(c).Encode(h.dispatch(ctx,data));return}
+ _,_=io.WriteString(c,h.apply(data,h.uid,h.gid)+"\n")
 }

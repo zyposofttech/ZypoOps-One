@@ -1,4 +1,4 @@
-# ZypoOps-One#
+# ZypoOps-One
 
 **A product-neutral operations and deployment control plane for Zyposoft software.**
 
@@ -34,15 +34,15 @@ These are platform goals. Features not explicitly listed as implemented below ma
        +---------------------------------------------------+
        | Go Site Agent                                     |
        | - Contract and signature verification             |
-       | - SQLite WAL job and receipt ledger                |
-       | - Offline/restart recovery                          |
+       | - SQLite WAL job and receipt ledger               |
+       | - Offline/restart recovery                        |
        +----------------------------+----------------------+
                                     | Restricted Unix socket
        +----------------------------v----------------------+
        | Local Helper (independent authorisation boundary) |
-       | - Peer credential validation                       |
-       | - Signature / consent / artifact re-verification    |
-       | - Allow-listed operations                           |
+       | - Peer credential validation                      |
+       | - Signature / consent / artifact re-verification  |
+       | - Allow-listed operations                         |
        +----------------------------+----------------------+
                                     |
                    Product-specific local management API
