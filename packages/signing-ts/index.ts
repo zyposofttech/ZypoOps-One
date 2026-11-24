@@ -78,6 +78,9 @@ export function signAttestation(unsigned:string, trust:Trust, kid:string, privat
   const doc=object(parseWire(unsigned)), target=nested(doc), key=trust.get(kid);
   if(!key || !target) throw Error('ATTESTATION_TYPE');
   keyFor(trust,kid,key.alg,target.purpose,doc);
+  const candidate={...doc, body:{...object(doc.body),[target.field]:{kid,alg:key.alg,value:'A'.repeat(86)}},
+    signature:{kid:'placeholder',alg:'Ed25519',value:'A'.repeat(86)}};
+  decode(canonical(candidate));
   const sig=signature(kid,key,privateKey,target.input);
   check(trust,doc,sig,target.purpose,target.input);
   return sig;

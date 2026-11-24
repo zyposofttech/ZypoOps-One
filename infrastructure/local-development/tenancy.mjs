@@ -21,7 +21,7 @@ let started=false;
 try{
  execFileSync(bin('initdb'),['-D',data,'-U','test_admin','--auth=scram-sha-256','--encoding=UTF8','--locale=C','--pwfile='+pgpass],{stdio:'inherit'});
  rmSync(pgpass);
- execFileSync(bin('pg_ctl'),['-D',data,'-l',path.join(dir,'server.log'),'-o','-h 127.0.0.1 -p '+port,'-w','start'],{stdio:'inherit'});started=true;
+ execFileSync(bin('pg_ctl'),['-D',data,'-l',path.join(dir,'server.log'),'-o','-h 127.0.0.1 -p '+port+(process.platform==='win32'?'':" -k ''"),'-w','start'],{stdio:'inherit'});started=true;
  sql('test_admin',passwords[0],"CREATE ROLE zop_migrate LOGIN NOSUPERUSER NOCREATEROLE NOBYPASSRLS PASSWORD '"+passwords[1]+"'; CREATE ROLE zop_runtime LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS PASSWORD '"+passwords[2]+"'; GRANT CREATE ON DATABASE postgres TO zop_migrate; CREATE SCHEMA zop AUTHORIZATION zop_migrate;");
  const env={...process.env,DATABASE_URL:dbUrl('zop_migrate',passwords[1])};
  prisma(['migrate','deploy'],env);prisma(['migrate','deploy'],env);

@@ -1,0 +1,221 @@
+{
+  "source": "Verification pack docs/audit_traceability_v1_2.csv and independent v1.2 findings matrix. Original descriptions and same-ID later descriptions are distinct records. A topic link is not a closure determination.",
+  "records": [
+    {
+      "original_id": "AUD-P0-01",
+      "original_title": "Global/Product-Wide Artifacts Forced Into Site-Scoped Signed Envelopes",
+      "v1_2_same_id": "AUD-P0-01",
+      "v1_2_title": "Envelope & scope separation across MC-01..MC-14",
+      "related_v1_2_topic": "AUD-P0-01",
+      "related_title": "Envelope & scope separation across MC-01..MC-14"
+    },
+    {
+      "original_id": "AUD-P0-02",
+      "original_title": "Ed25519-Only Schema Lock-In Contradicts Hardware TPM 2.0 Key Storage",
+      "v1_2_same_id": "AUD-P0-02",
+      "v1_2_title": "Bootstrap claim abuse, CSR PoP, HMAC binding & offline re-enrolment",
+      "related_v1_2_topic": "AUD-P0-06",
+      "related_title": "RFC 8785 JCS canonicalisation & strict duplicate-key/surrogate rejection"
+    },
+    {
+      "original_id": "AUD-P0-03",
+      "original_title": "MC-09 Approval Grant Lacks Cryptographic Site-Authoriser Proof (Offline Consent Bypass)",
+      "v1_2_same_id": "AUD-P0-03",
+      "v1_2_title": "Ops-only approval on high-risk actions without customer cryptographic consent",
+      "related_v1_2_topic": "AUD-P0-03",
+      "related_title": "Ops-only approval on high-risk actions without customer cryptographic consent"
+    },
+    {
+      "original_id": "AUD-P0-04",
+      "original_title": "MC-03 Envelope Contradiction & Untyped Command Parameters",
+      "v1_2_same_id": "AUD-P0-04",
+      "v1_2_title": "Unconstrained MC-03 job command parameters enabling arbitrary execution",
+      "related_v1_2_topic": "AUD-P0-04",
+      "related_title": "Unconstrained MC-03 job command parameters enabling arbitrary execution"
+    },
+    {
+      "original_id": "AUD-P0-05",
+      "original_title": "MC-02 Enrolment Chicken-and-Egg Signature & Missing Proof-of-Possession Binding",
+      "v1_2_same_id": "AUD-P0-05",
+      "v1_2_title": "Agent privilege boundary, Docker socket exposure & local-helper isolation",
+      "related_v1_2_topic": "AUD-P0-02",
+      "related_title": "Bootstrap claim abuse, CSR PoP, HMAC binding & offline re-enrolment"
+    },
+    {
+      "original_id": "AUD-P0-06",
+      "original_title": "Missing Domain Separation, Key-Purpose Matrix & Canonical Signing Byte Specification",
+      "v1_2_same_id": "AUD-P0-06",
+      "v1_2_title": "RFC 8785 JCS canonicalisation & strict duplicate-key/surrogate rejection",
+      "related_v1_2_topic": "AUD-P0-06",
+      "related_title": "RFC 8785 JCS canonicalisation & strict duplicate-key/surrogate rejection"
+    },
+    {
+      "original_id": "AUD-P0-07",
+      "original_title": "Local Deployment Helper Lacks Independent Signature Verification & Rootless Execution Model",
+      "v1_2_same_id": "AUD-P0-07",
+      "v1_2_title": "Signed artifact delivery, OCI digest pinning, TUF metadata & rollback recovery",
+      "related_v1_2_topic": "AUD-P0-05",
+      "related_title": "Agent privilege boundary, Docker socket exposure & local-helper isolation"
+    },
+    {
+      "original_id": "AUD-P0-08",
+      "original_title": "SQLite Baseline Schema Has Sequence-Reset, Clock-Rollback & Idempotency Bugs",
+      "v1_2_same_id": "AUD-P0-08",
+      "v1_2_title": "Agent SQLite WAL durability, idempotency, replay & monotonic clock watermark",
+      "related_v1_2_topic": "AUD-P0-08",
+      "related_title": "Agent SQLite WAL durability, idempotency, replay & monotonic clock watermark"
+    },
+    {
+      "original_id": "AUD-P0-09",
+      "original_title": "MC-07 Telemetry Allows Unbounded Free-Text Strings (PHI Exfiltration Vector)",
+      "v1_2_same_id": "AUD-P0-09",
+      "v1_2_title": "Clinical/PHI boundary preventing central console from becoming a PHI store",
+      "related_v1_2_topic": "AUD-P0-09",
+      "related_title": "Clinical/PHI boundary preventing central console from becoming a PHI store"
+    },
+    {
+      "original_id": "AUD-P0-10",
+      "original_title": "Central Data Model Omits Mandatory Tenant Composite Keys & Prisma+RLS Isolation Mechanics",
+      "v1_2_same_id": "AUD-P0-10",
+      "v1_2_title": "Central PostgreSQL tenant/site isolation, composite FKs & FORCE RLS",
+      "related_v1_2_topic": "AUD-P0-10",
+      "related_title": "Central PostgreSQL tenant/site isolation, composite FKs & FORCE RLS"
+    },
+    {
+      "original_id": "AUD-P0-11",
+      "original_title": "All Eight O0 Blocker Decisions (OD01–OD08) Remain Unapproved Without Named Owners",
+      "v1_2_same_id": "AUD-P0-11",
+      "v1_2_title": "Formal human approval of OD01–OD08 ADRs and resolution of Q01–Q07",
+      "related_v1_2_topic": "AUD-P0-11",
+      "related_title": "Formal human approval of OD01–OD08 ADRs and resolution of Q01–Q07"
+    },
+    {
+      "original_id": "AUD-P1-01",
+      "original_title": "MC-05 Deployment Manifest Drops Critical Supply-Chain, Arch & Migration Fields",
+      "v1_2_same_id": "AUD-P1-01",
+      "v1_2_title": "Multi-product management without modifying core agent trust logic",
+      "related_v1_2_topic": "AUD-P0-07",
+      "related_title": "Signed artifact delivery, OCI digest pinning, TUF metadata & rollback recovery"
+    },
+    {
+      "original_id": "AUD-P1-02",
+      "original_title": "Release-Phase Scope Contradiction Between BRD §03 and TDS §16.3 (Device Factory & Backup)",
+      "v1_2_same_id": "AUD-P1-02",
+      "v1_2_title": "BRD §04 release-phase boundary alignment for OP16–OP20",
+      "related_v1_2_topic": "AUD-P1-02",
+      "related_title": "BRD §04 release-phase boundary alignment for OP16–OP20"
+    },
+    {
+      "original_id": "AUD-P1-03",
+      "original_title": "Negative Test Vector ID Collision & Missing NX01–NX70 Traceability",
+      "v1_2_same_id": "AUD-P1-03",
+      "v1_2_title": "Traceability of 50 master acceptance tests & 70 negative scenarios",
+      "related_v1_2_topic": "AUD-P1-03",
+      "related_title": "Traceability of 50 master acceptance tests & 70 negative scenarios"
+    },
+    {
+      "original_id": "AUD-P1-04",
+      "original_title": "Product-Neutrality Leakage in MC-05 and Release Execution Algorithm",
+      "v1_2_same_id": "AUD-P1-04",
+      "v1_2_title": "Offline licensing, local clinical continuity & non-destructive post-grace mode",
+      "related_v1_2_topic": "AUD-P1-01",
+      "related_title": "Multi-product management without modifying core agent trust logic"
+    },
+    {
+      "original_id": "AUD-P1-05",
+      "original_title": "Offline Certificate Expiry & Trust-Root Rollover Recovery Protocol Under-Specified",
+      "v1_2_same_id": "AUD-P1-05",
+      "v1_2_title": "Certificate rotation, expiry recovery & revocation handling",
+      "related_v1_2_topic": "AUD-P1-05",
+      "related_title": "Certificate rotation, expiry recovery & revocation handling"
+    },
+    {
+      "original_id": "AUD-P1-06",
+      "original_title": "TUF Anti-Rollback & Freeze Protection Deferred Without Concrete Metadata Contract",
+      "v1_2_same_id": "AUD-P1-06",
+      "v1_2_title": "Phishing-resistant MFA, OIDC IdP, RBAC & maker-checker enforcement",
+      "related_v1_2_topic": "AUD-P0-07",
+      "related_title": "Signed artifact delivery, OCI digest pinning, TUF metadata & rollback recovery"
+    },
+    {
+      "original_id": "AUD-P1-07",
+      "original_title": "MC-04 Receipt & MC-03 State Machine Mismatch (No Intermediate Receipt Tracking)",
+      "v1_2_same_id": "AUD-P1-07",
+      "v1_2_title": "Tamper-evident operational audit trail & WORM anchoring",
+      "related_v1_2_topic": "NEW-P1-01",
+      "related_title": "AUX-01 job_progress lacked canonical wrapped envelope & signature"
+    },
+    {
+      "original_id": "AUD-P1-08",
+      "original_title": "Agent <-> Site Gateway Local Control API Lacks Auth & Clinical-Lock Interface Contract",
+      "v1_2_same_id": "AUD-P1-08",
+      "v1_2_title": "ZypoSono One local interface ownership, locks & device certification boundary",
+      "related_v1_2_topic": "AUD-P1-08",
+      "related_title": "ZypoSono One local interface ownership, locks & device certification boundary"
+    },
+    {
+      "original_id": "AUD-P1-09",
+      "original_title": "Over-Engineered O1 Infrastructure Choices for a Small Engineering Team",
+      "v1_2_same_id": "AUD-P1-09",
+      "v1_2_title": "Signed backup receipt gate & restore drill tracking",
+      "related_v1_2_topic": "AUD-P2-06",
+      "related_title": "Avoidable infrastructure complexity for a small engineering team"
+    },
+    {
+      "original_id": "AUD-P1-10",
+      "original_title": "Operational Audit Chaining & DB-Admin Tamper Mitigation Undefined",
+      "v1_2_same_id": "AUD-P1-10",
+      "v1_2_title": "Time-bounded, site-consented support sessions & diagnostic bundles",
+      "related_v1_2_topic": "AUD-P1-07",
+      "related_title": "Tamper-evident operational audit trail & WORM anchoring"
+    },
+    {
+      "original_id": "AUD-P2-01",
+      "original_title": "Companion ZypoSono BRD Version Drift (v1.2 vs. v1.3)",
+      "v1_2_same_id": "AUD-P2-01",
+      "v1_2_title": "Cross-reference alignment between Ops BRD and ZypoSono One BRD version",
+      "related_v1_2_topic": "AUD-P2-01",
+      "related_title": "Cross-reference alignment between Ops BRD and ZypoSono One BRD version"
+    },
+    {
+      "original_id": "AUD-P2-02",
+      "original_title": "Schema `$id` Uses Non-Canonical Placeholder Domain & `schema_version` Const Blocks Minor Evolution",
+      "v1_2_same_id": "AUD-P2-02",
+      "v1_2_title": "Independent key rotation without breaking historical receipt verification",
+      "related_v1_2_topic": "AUD-P2-04",
+      "related_title": "Strict schema_version regex & additionalProperties: false across contracts"
+    },
+    {
+      "original_id": "AUD-P2-03",
+      "original_title": "MC-01 Direction Mismatch Between TDS §09 and `catalog.json`",
+      "v1_2_same_id": "AUD-P2-03",
+      "v1_2_title": "Air-gapped / USB offline artifact bundle verification",
+      "related_v1_2_topic": "AUD-P0-01",
+      "related_title": "Envelope & scope separation across MC-01..MC-14"
+    },
+    {
+      "original_id": "AUD-P2-04",
+      "original_title": "Field Naming Drift Between TDS §09 Prose Tables and JSON Schemas",
+      "v1_2_same_id": "AUD-P2-04",
+      "v1_2_title": "Strict schema_version regex & additionalProperties: false across contracts",
+      "related_v1_2_topic": null,
+      "related_title": null
+    },
+    {
+      "original_id": "AUD-P2-05",
+      "original_title": "`certificate_identity.serial` Globally Unique Instead of `(issuer, serial)`",
+      "v1_2_same_id": "AUD-P2-05",
+      "v1_2_title": "Customer offboarding & site ownership transfer auditability",
+      "related_v1_2_topic": "AUD-P1-05",
+      "related_title": "Certificate rotation, expiry recovery & revocation handling"
+    },
+    {
+      "original_id": "AUD-P2-06",
+      "original_title": "Missing `MC-08` Post-Grace Behavior Enum & `MC-12` Clinical Signing Key Format",
+      "v1_2_same_id": "AUD-P2-06",
+      "v1_2_title": "Avoidable infrastructure complexity for a small engineering team",
+      "related_v1_2_topic": "AUD-P1-04",
+      "related_title": "Offline licensing, local clinical continuity & non-destructive post-grace mode"
+    }
+  ]
+}

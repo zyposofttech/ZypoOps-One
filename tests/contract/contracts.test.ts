@@ -3,9 +3,26 @@ import test from 'node:test';
 import {createPublicKey,generateKeyPairSync,sign} from 'node:crypto';
 import {decode, decodeLocal} from '../../packages/management-contracts/index.ts';
 import {canonical,object,parseWire} from '../../packages/management-contracts/json.ts';
-import {verifyMessage,envelopeBytes} from '../../packages/signing-ts/index.ts';
+import {verifyMessage,envelopeBytes,signAttestation,signMessage} from '../../packages/signing-ts/index.ts';
 import {read,example,scope,fixtureTrust} from '../fixtures/load.ts';
 const trust=fixtureTrust();
+test('site signer validates the approval shape before issuing a usable attestation',()=>{
+  const local=generateKeyPairSync('ed25519'),central=generateKeyPairSync('ed25519');
+  const keys=new Map(trust)
+    .set('local-test',{...scope,alg:'Ed25519',purpose:'site_authoriser',publicKey:local.publicKey})
+    .set('central-test',{alg:'Ed25519',purpose:'ops_approval',publicKey:central.publicKey});
+  const doc=JSON.parse(example('MC-09'));
+  delete doc.signature;
+  delete doc.body.site_authoriser_attestation;
+  const attest=()=>signAttestation(JSON.stringify(doc),keys,'local-test',local.privateKey);
+  doc.body.target_digest_sha256='invalid';assert.throws(attest,/INVALID_CONTRACT/);
+  doc.body.target_digest_sha256='b'.repeat(64);doc.body.site_authoriser_attestation=attest();
+  const expected={contract:'MC-09',scope};
+  const wire=signMessage(JSON.stringify(doc),expected,keys,'central-test',central.privateKey);
+  assert.equal(verifyMessage(wire,expected,keys).contract_id,'MC-09');
+  doc.body.target_digest_sha256='c'.repeat(64);
+  assert.throws(()=>signMessage(JSON.stringify(doc),expected,keys,'central-test',central.privateKey),/BAD_SIGNATURE/);
+});
 for(const v of JSON.parse(read('vectors/signed_vectors.json'))) test('golden '+v.contract_id,()=>{
   const wire=example(v.contract_id);
   verifyMessage(wire,{contract:v.contract_id,scope},trust);

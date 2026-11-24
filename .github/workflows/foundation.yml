@@ -1,0 +1,26 @@
+name: O1 foundation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  foundation:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm generate && git diff --exit-code -- packages/management-contracts
+      - run: pnpm db:generate
+      - run: pnpm lint && pnpm typecheck && pnpm test && pnpm test:interop
+      - run: go vet ./... && go test -race -count=1 ./...
+      - name: PostgreSQL 16 migrations and pooled RLS
+        env:
+          PGBIN: /usr/lib/postgresql/16/bin
+        run: node infrastructure/local-development/tenancy.mjs
