@@ -14,8 +14,8 @@ import (
 	"log/slog"
 	"strings"
 	"time"
+	"zyposoft.local/operations/packages/deployment"
 	"zyposoft.local/operations/packages/local-policy"
-"zyposoft.local/operations/packages/deployment"
 	"zyposoft.local/operations/packages/local-store"
 	contracts "zyposoft.local/operations/packages/management-contracts"
 	"zyposoft.local/operations/packages/signing-go"
@@ -64,7 +64,7 @@ type Agent struct {
 	log      *slog.Logger
 	fault    func(string) error
 	recovery *TestTimeSource
- executor deployment.Helper
+	executor deployment.Helper
 }
 
 func Open(path string, id Identity, c policy.Config, keys TestKeyProvider, log *slog.Logger) (*Agent, error) {
@@ -157,11 +157,13 @@ func (a *Agent) clock(tx *sql.Tx, s Sample) (bool, error) {
 func (a *Agent) Handle(ctx context.Context, b policy.Bundle, s Sample) ([]byte, error) {
 	// An invalid network message cannot poison the trusted-clock watermark.
 	doc, err := signing.Verify("MC-03", b.Job, a.config.Scope, a.config.Trust)
- if err != nil {
+	if err != nil {
 		return nil, err
 	}
-	if a.executor!=nil && doc["body"].(signing.Object)["command_type"]=="DEPLOY_RELEASE"{return a.dispatch(ctx,b,s)}
- tx, err := a.db.BeginTx(ctx, nil)
+	if a.executor != nil && doc["body"].(signing.Object)["command_type"] == "DEPLOY_RELEASE" {
+		return a.dispatch(ctx, b, s)
+	}
+	tx, err := a.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -214,8 +216,10 @@ func (a *Agent) process(tx *sql.Tx, b policy.Bundle, s Sample) ([]byte, error) {
 	if err != sql.ErrNoRows {
 		return nil, err
 	}
-	if err=reserveJob(tx,authorized,now,a.config.Installation,a.config.Scope.Site);err!=nil{return nil,err}
- // The only effect is this database row. It commits atomically with the receipt.
+	if err = reserveJob(tx, authorized, now, a.config.Installation, a.config.Scope.Site); err != nil {
+		return nil, err
+	}
+	// The only effect is this database row. It commits atomically with the receipt.
 	if _, err = tx.Exec("INSERT INTO job_stage VALUES(?,0,'SIMULATION',?,?,'FINISHED',NULL)", j.JobId, now, now); err != nil {
 		return nil, err
 	}
@@ -224,11 +228,11 @@ func (a *Agent) process(tx *sql.Tx, b policy.Bundle, s Sample) ([]byte, error) {
 			return nil, err
 		}
 	}
-	return a.finish(tx,j.JobId,now,deployment.Result{Execution:uuid.NewString(),State:"SUCCEEDED",Stage:"SIMULATION",Artifact:authorized.Digest,Code:"NONE"})
+	return a.finish(tx, j.JobId, now, deployment.Result{Execution: uuid.NewString(), State: "SUCCEEDED", Stage: "SIMULATION", Artifact: authorized.Digest, Code: "NONE"})
 }
-func reserveJob(tx *sql.Tx, authorized policy.Authorized,now,installation,site string)error{
- j:=authorized.Job.Body
- res, err := tx.Exec("UPDATE agent_sequence SET last_sequence=?,updated_at=? WHERE installation_id=? AND last_sequence=?", j.Sequence, now, installation, j.Sequence-1)
+func reserveJob(tx *sql.Tx, authorized policy.Authorized, now, installation, site string) error {
+	j := authorized.Job.Body
+	res, err := tx.Exec("UPDATE agent_sequence SET last_sequence=?,updated_at=? WHERE installation_id=? AND last_sequence=?", j.Sequence, now, installation, j.Sequence-1)
 	if err != nil {
 		return err
 	}
@@ -255,8 +259,8 @@ func reserveJob(tx *sql.Tx, authorized policy.Authorized,now,installation,site s
 	}
 	return nil
 }
-func(a *Agent)finish(tx *sql.Tx,job,now string,out deployment.Result)([]byte,error){
- receipt := uuid.NewString()
+func (a *Agent) finish(tx *sql.Tx, job, now string, out deployment.Result) ([]byte, error) {
+	receipt := uuid.NewString()
 	doc := signing.Object{"contract_id": "MC-04", "schema_version": "1.2.0", "message_id": receipt, "site_id": a.config.Scope.Site, "tenant_id": a.config.Scope.Tenant, "sent_at": now, "body": signing.Object{"job_id": job, "execution_id": out.Execution, "state": out.State, "stage": out.Stage, "observed_sha256": out.Artifact, "error_code": out.Code, "event_at": now, "clock_confidence": "TRUSTED"}}
 	unsigned, err := json.Marshal(doc)
 	if err != nil {
@@ -277,7 +281,7 @@ func(a *Agent)finish(tx *sql.Tx,job,now string,out deployment.Result)([]byte,err
 	if _, err = tx.Exec("INSERT INTO execution_receipt VALUES(?,?,?,?,?,?,?,NULL)", receipt, job, out.Execution, out.State, hash, string(wire), now); err != nil {
 		return nil, err
 	}
-	if _, err = tx.Exec("UPDATE received_job SET state=? WHERE job_id=?", out.State,job); err != nil {
+	if _, err = tx.Exec("UPDATE received_job SET state=? WHERE job_id=?", out.State, job); err != nil {
 		return nil, err
 	}
 	return wire, nil
@@ -305,19 +309,32 @@ func (a *Agent) Run(ctx context.Context, t Transport, clock func() Sample) error
 		if err != sql.ErrNoRows {
 			return err
 		}
-		if a.executor!=nil{
-   var pending []byte
-   err=a.db.QueryRowContext(ctx,"SELECT bundle FROM pending_deployment p JOIN received_job j USING(job_id) WHERE j.state='RUNNING' ORDER BY j.sequence LIMIT 1").Scan(&pending)
-   if err==nil{var b policy.Bundle;if err=json.Unmarshal(pending,&b);err!=nil{return err};if _,err=a.Handle(ctx,b,clock());err!=nil{return err};continue}
-   if err!=sql.ErrNoRows{return err}
-  }
-  b, err := t.Next(ctx)
+		if a.executor != nil {
+			var pending []byte
+			err = a.db.QueryRowContext(ctx, "SELECT bundle FROM pending_deployment p JOIN received_job j USING(job_id) WHERE j.state='RUNNING' ORDER BY j.sequence LIMIT 1").Scan(&pending)
+			if err == nil {
+				var b policy.Bundle
+				if err = json.Unmarshal(pending, &b); err != nil {
+					return err
+				}
+				if _, err = a.Handle(ctx, b, clock()); err != nil {
+					return err
+				}
+				continue
+			}
+			if err != sql.ErrNoRows {
+				return err
+			}
+		}
+		b, err := t.Next(ctx)
 		if err != nil {
 			return err
 		}
 		if _, err = a.Handle(ctx, b, clock()); err != nil {
 			a.log.Warn("job_rejected", "code", "MANAGEMENT_REJECTED")
- if a.executor!=nil{return err}
+			if a.executor != nil {
+				return err
+			}
 			continue
 		}
 	}

@@ -7,10 +7,10 @@ import (
 	"encoding/json"
 	"errors"
 	"time"
-	pl "zyposoft.local/operations/packages/product-local"
 	"zyposoft.local/operations/packages/local-policy"
 	"zyposoft.local/operations/packages/local-store"
 	contracts "zyposoft.local/operations/packages/management-contracts"
+	pl "zyposoft.local/operations/packages/product-local"
 )
 
 type Helper struct {
@@ -48,7 +48,7 @@ func Open(path string, c policy.Config, uid, gid uint32, now func() time.Time) (
 		db.Close()
 		return nil, err
 	}
-	return &Helper{db:db, cfg:c.Clone(), uid:uid, gid:gid, now:now}, nil
+	return &Helper{db: db, cfg: c.Clone(), uid: uid, gid: gid, now: now}, nil
 }
 func (h *Helper) Close() error { return h.db.Close() }
 func (h *Helper) apply(raw []byte, uid, gid uint32) string {
@@ -80,7 +80,7 @@ func (h *Helper) apply(raw []byte, uid, gid uint32) string {
 	}
 	defer tx.Rollback()
 	now := h.now().UTC()
-	blocked, err := observeTime(tx,now)
+	blocked, err := observeTime(tx, now)
 	if err != nil {
 		return "STORE_UNAVAILABLE"
 	}
@@ -109,15 +109,17 @@ func (h *Helper) simulate(tx *sql.Tx, b policy.Bundle, now time.Time) string {
 	if err != nil || approved.Job.Body.CommandType != "DEPLOY_RELEASE" {
 		return "OPERATION_DENIED"
 	}
-	return reserve(tx,approved)
+	return reserve(tx, approved)
 }
-func observeTime(tx *sql.Tx,now time.Time)(bool,error){
-	_,err:=tx.Exec("INSERT INTO time_floor VALUES(1,?,0) ON CONFLICT(singleton) DO UPDATE SET blocked=(blocked OR excluded.utc<utc),utc=max(utc,excluded.utc)",now.UnixNano())
+func observeTime(tx *sql.Tx, now time.Time) (bool, error) {
+	_, err := tx.Exec("INSERT INTO time_floor VALUES(1,?,0) ON CONFLICT(singleton) DO UPDATE SET blocked=(blocked OR excluded.utc<utc),utc=max(utc,excluded.utc)", now.UnixNano())
 	var blocked bool
-	if err==nil{err=tx.QueryRow("SELECT blocked FROM time_floor").Scan(&blocked)}
-	return blocked,err
+	if err == nil {
+		err = tx.QueryRow("SELECT blocked FROM time_floor").Scan(&blocked)
+	}
+	return blocked, err
 }
-func reserve(tx *sql.Tx,approved policy.Authorized)string{
+func reserve(tx *sql.Tx, approved policy.Authorized) string {
 	var err error
 	j := approved.Job.Body
 	var floor int64
