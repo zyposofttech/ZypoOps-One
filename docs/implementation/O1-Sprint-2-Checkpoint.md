@@ -19,3 +19,9 @@ Both product profiles passed the targeted admission and effect tests. The indepe
 Windows regular and race builds each passed 58 named Go tests/subtests. WSL2 regular and race builds each passed 179 with one standalone role-entry skip. All four Linux test packages ran under UID/GID 65534. The final targeted cross-table assertions passed all 12 crash subcases again in both Linux builds. TypeScript passed 31/31, interop 2/2 and PostgreSQL 16.13 passed 5/5, including 120 transactions on four connections. Lint, type checking, both vet targets, formatting, drift, diff validation and five source-pack harnesses passed.
 
 The complete evidence, scoped limitations, exact commands and verdict are in [the Sprint 2 implementation report](O1-Sprint-2.md). The next step is independent review. The local hardening has no commit or hosted result. OD01–OD08 remain unsigned and Sprint 3 is gated on review.
+
+## Dated status correction · 25 November 2026
+
+The previously local Sprint 2 candidate was subsequently committed as `8f9d88be2013c9b014202fc2435ec1368d83575c`. Hosted run 45594545137 passed on that SHA. The earlier entries above record the state when the original regression ran. The independent audit returned GO_WITH_CONDITIONS_TEST_ONLY. Sprint 3 awaits independent remediation acceptance. [Hosted run](https://github.com/zyposofttech/ZypoOps-One/actions/runs/45594545137)
+
+AUD-S2-P3-01 document erratum. The Operations Platform Master BRD v1.2 carries stale v1.1 footer text. Use the title, revision history and recorded source checksum to identify the revision. The original PDFs and their checksums are preserved.

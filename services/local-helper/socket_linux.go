@@ -7,14 +7,29 @@ import (
 	"context"
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"io"
 	"net"
+	"sync"
 	"time"
 	contracts "zyposoft.local/operations/packages/management-contracts"
 	"zyposoft.local/operations/packages/unixpeer"
 )
 
 func (h *Helper) Serve(ctx context.Context, path string) error {
+	return h.ServeWithLimit(ctx, path, 16)
+}
+
+// ServeWithLimit bounds accepted connections, including callers stalled on a
+// partial frame. Cancellation closes active sockets before waiting for workers.
+func (h *Helper) ServeWithLimit(ctx context.Context, path string, limit int) error {
+	if limit < 1 || limit > 256 {
+		return errors.New("CONNECTION_LIMIT")
+	}
+	ctx, cancel := context.WithCancel(ctx)
+	var workers sync.WaitGroup
+	defer func() { cancel(); workers.Wait() }()
+	slots := make(chan struct{}, limit)
 	l, err := unixpeer.Listen(path)
 	if err != nil {
 		return err
@@ -30,7 +45,13 @@ func (h *Helper) Serve(ctx context.Context, path string) error {
 			}
 			return err
 		}
-		h.handleConn(ctx, c)
+		select {
+		case slots <- struct{}{}:
+			workers.Add(1)
+			go func() { defer workers.Done(); defer func() { <-slots }(); h.handleConn(ctx, c) }()
+		default:
+			c.Close()
+		}
 	}
 }
 func (h *Helper) handleConn(parent context.Context, c *net.UnixConn) {

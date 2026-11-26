@@ -154,14 +154,46 @@ func (a *Agent) clock(tx *sql.Tx, s Sample) (bool, error) {
 	_, err = tx.Exec("INSERT INTO clock_watermark VALUES(?,?,?,?,?) ON CONFLICT(installation_id) DO UPDATE SET last_trusted_utc=excluded.last_trusted_utc,last_monotonic_ns=excluded.last_monotonic_ns,boot_id=excluded.boot_id,clock_confidence=excluded.clock_confidence", a.config.Installation, now, max(s.Monotonic, 0), s.Boot, confidence)
 	return trusted, err
 }
+func (a *Agent) recordClock(ctx context.Context, s Sample) error {
+	tx, err := a.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	trusted, err := a.clock(tx, s)
+	if err != nil {
+		return err
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+	if !trusted {
+		return errors.New("CLOCK_UNTRUSTED")
+	}
+	return nil
+}
 func (a *Agent) Handle(ctx context.Context, b policy.Bundle, s Sample) ([]byte, error) {
+	return a.handle(ctx, b, s, nil)
+}
+func (a *Agent) handle(ctx context.Context, b policy.Bundle, s Sample, refresh func() Sample) ([]byte, error) {
 	// An invalid network message cannot poison the trusted-clock watermark.
 	doc, err := signing.Verify("MC-03", b.Job, a.config.Scope, a.config.Trust)
 	if err != nil {
 		return nil, err
 	}
+	// Persist the ingress sample before an external preflight can block or be
+	// cancelled. A later good sample cannot erase an observed rollback.
+	if err = a.recordClock(ctx, s); err != nil {
+		return nil, err
+	}
 	if a.executor != nil && doc["body"].(signing.Object)["command_type"] == "DEPLOY_RELEASE" {
-		return a.dispatch(ctx, b, s)
+		return a.dispatch(ctx, b, s, refresh)
+	}
+	start := time.Now()
+	approved, preflightErr := a.config.AuthorizeContext(ctx, b, s.UTC)
+	if refresh != nil {
+		s = refresh()
+		start = time.Now()
 	}
 	tx, err := a.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -183,7 +215,14 @@ func (a *Agent) Handle(ctx context.Context, b policy.Bundle, s Sample) ([]byte, 
 	if _, err = tx.Exec("SAVEPOINT job_processing"); err != nil {
 		return nil, err
 	}
-	wire, jobErr := a.process(tx, b, s)
+	var wire []byte
+	jobErr := preflightErr
+	if jobErr == nil && !approved.Current(s.UTC.Add(time.Since(start))) {
+		jobErr = errors.New("AUTHORITY_EXPIRED")
+	}
+	if jobErr == nil {
+		wire, jobErr = a.process(tx, approved, s)
+	}
 	if jobErr != nil {
 		if _, err = tx.Exec("ROLLBACK TO job_processing"); err != nil {
 			return nil, err
@@ -198,11 +237,8 @@ func (a *Agent) Handle(ctx context.Context, b policy.Bundle, s Sample) ([]byte, 
 	return wire, jobErr
 }
 
-func (a *Agent) process(tx *sql.Tx, b policy.Bundle, s Sample) ([]byte, error) {
-	authorized, err := a.config.Authorize(b, s.UTC)
-	if err != nil {
-		return nil, err
-	}
+func (a *Agent) process(tx *sql.Tx, authorized policy.Authorized, s Sample) ([]byte, error) {
+	var err error
 	j := authorized.Job.Body
 	now := s.UTC.UTC().Format(time.RFC3339Nano)
 	var existing, digest string
@@ -317,7 +353,7 @@ func (a *Agent) Run(ctx context.Context, t Transport, clock func() Sample) error
 				if err = json.Unmarshal(pending, &b); err != nil {
 					return err
 				}
-				if _, err = a.Handle(ctx, b, clock()); err != nil {
+				if _, err = a.resume(ctx, b, clock()); err != nil {
 					return err
 				}
 				continue
@@ -330,7 +366,7 @@ func (a *Agent) Run(ctx context.Context, t Transport, clock func() Sample) error
 		if err != nil {
 			return err
 		}
-		if _, err = a.Handle(ctx, b, clock()); err != nil {
+		if _, err = a.handle(ctx, b, clock(), clock); err != nil {
 			a.log.Warn("job_rejected", "code", "MANAGEMENT_REJECTED")
 			if a.executor != nil {
 				return err

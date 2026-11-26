@@ -36,9 +36,12 @@ type Config struct {
 	BackupForJob                 map[string]BackupRequirement
 }
 type Authorized struct {
-	Job    contracts.MC03
-	Digest string
-	Grants map[string]string
+	Job                 contracts.MC03
+	Digest              string
+	Grants              map[string]string
+	Product             string
+	Locks               []string
+	checkedAt, deadline time.Time
 }
 
 func Digest(wire []byte) (string, error) {
@@ -84,6 +87,32 @@ func (c Config) Authorize(b Bundle, now time.Time) (Authorized, error) {
 	return c.AuthorizeContext(context.Background(), b, now)
 }
 func (c Config) AuthorizeContext(ctx context.Context, b Bundle, now time.Time) (Authorized, error) {
+	approved, err := c.Validate(b, now)
+	if err != nil || approved.Product == "" {
+		return approved, err
+	}
+	if c.LocalCheck != nil {
+		return approved, c.LocalCheck(ctx, approved.Product, slices.Clone(approved.Locks))
+	}
+	if c.Preflight == nil || !c.Preflight(approved.Product, slices.Clone(approved.Locks)) {
+		return approved, errors.New("SITE_LOCK_ACTIVE")
+	}
+	return approved, nil
+}
+
+// Current rechecks the validated proof interval after external I/O or lock contention.
+func (a Authorized) Current(now time.Time) bool {
+	return !now.Before(a.checkedAt) && now.Before(a.deadline)
+}
+func (a *Authorized) limit(value string) {
+	t, _ := time.Parse(time.RFC3339Nano, value)
+	if t.Before(a.deadline) {
+		a.deadline = t
+	}
+}
+
+// Validate performs contract, signature, binding and time checks without I/O.
+func (c Config) Validate(b Bundle, now time.Time) (Authorized, error) {
 	denied := errors.New("LOCAL_POLICY_DENIED")
 	var result Authorized
 	job, err := verified[contracts.MC03]("MC-03", b.Job, c)
@@ -104,7 +133,8 @@ func (c Config) AuthorizeContext(ctx context.Context, b Bundle, now time.Time) (
 	if err != nil {
 		return result, err
 	}
-	result = Authorized{job, hash, map[string]string{}}
+	deadline, _ := time.Parse(time.RFC3339Nano, j.ExpiresAt)
+	result = Authorized{Job: job, Digest: hash, Grants: map[string]string{}, checkedAt: now, deadline: deadline}
 	if j.CommandType == "REQUEST_HEALTH" && len(j.ApprovalGrantIds) == 0 && len(b.Grants) == 0 && len(b.Manifest) == 0 && len(b.Backup) == 0 {
 		return result, nil
 	}
@@ -127,6 +157,7 @@ func (c Config) AuthorizeContext(ctx context.Context, b Bundle, now time.Time) (
 	if len(j.ApprovalGrantIds) == 0 || len(b.Grants) != len(j.ApprovalGrantIds) {
 		return result, errors.New("APPROVAL_REQUIRED")
 	}
+	result.limit(m.ExpiresAt)
 	for _, raw := range b.Grants {
 		grant, err := verified[contracts.MC09]("MC-09", raw, c)
 		if err != nil {
@@ -142,6 +173,7 @@ func (c Config) AuthorizeContext(ctx context.Context, b Bundle, now time.Time) (
 			return result, err
 		}
 		result.Grants[g.GrantId] = hash
+		result.limit(g.ValidUntil)
 	}
 	if m.BackupEvidenceRequired {
 		backup, err := verified[contracts.MC14]("MC-14", b.Backup, c)
@@ -150,19 +182,18 @@ func (c Config) AuthorizeContext(ctx context.Context, b Bundle, now time.Time) (
 		}
 		body := backup.Body
 		when, err := time.Parse(time.RFC3339Nano, body.LastSuccessAt)
-		if err != nil || now.Before(when) || now.Sub(when) > 24*time.Hour || !body.Encrypted || !body.IntegrityVerified || body.ErrorState != "NONE" {
+		if err != nil || now.Before(when) || now.Sub(when) >= 24*time.Hour || !body.Encrypted || !body.IntegrityVerified || body.ErrorState != "NONE" {
 			return result, denied
 		}
-		if c.LocalCheck != nil {
-			expected, ok := c.BackupForJob[j.JobId]
-			sent, e := time.Parse(time.RFC3339Nano, backup.SentAt)
-			if !ok || expected.Product != p.ProductKey || expected.Artifact != digest || expected.BackupManifest != body.BackupManifestSha256 || expected.Signer != backup.Signature.Kid || len(expected.Categories) == 0 || len(expected.Categories) != len(body.DatasetCategories) || e != nil || sent.After(now) || sent.Before(when) || body.BackupAgeSeconds != int64(sent.Sub(when)/time.Second) {
+		result.limit(when.Add(24 * time.Hour).Format(time.RFC3339Nano))
+		expected, ok := c.BackupForJob[j.JobId]
+		sent, e := time.Parse(time.RFC3339Nano, backup.SentAt)
+		if !ok || expected.Product != p.ProductKey || expected.Artifact != digest || expected.BackupManifest != body.BackupManifestSha256 || expected.Signer != backup.Signature.Kid || len(expected.Categories) == 0 || len(expected.Categories) != len(body.DatasetCategories) || e != nil || sent.After(now) || sent.Before(when) || body.BackupAgeSeconds != int64(sent.Sub(when)/time.Second) {
+			return result, errors.New("BACKUP_NOT_VERIFIED")
+		}
+		for _, category := range body.DatasetCategories {
+			if !slices.Contains(expected.Categories, category) {
 				return result, errors.New("BACKUP_NOT_VERIFIED")
-			}
-			for _, category := range expected.Categories {
-				if !slices.Contains(body.DatasetCategories, category) {
-					return result, errors.New("BACKUP_NOT_VERIFIED")
-				}
 			}
 		}
 	}
@@ -170,11 +201,9 @@ func (c Config) AuthorizeContext(ctx context.Context, b Bundle, now time.Time) (
 		if len(m.HealthProbes) != 1 || m.HealthProbes[0].ProbeType != "HTTP" || m.HealthProbes[0].Target != "/local/v1/readiness" {
 			return result, errors.New("UNSUPPORTED_PROBE")
 		}
-		return result, c.LocalCheck(ctx, m.ProductId, slices.Clone(m.RequiredLocks))
 	}
-	if c.Preflight == nil || !c.Preflight(m.ProductId, slices.Clone(m.RequiredLocks)) {
-		return result, errors.New("SITE_LOCK_ACTIVE")
-	}
+	result.Product = m.ProductId
+	result.Locks = m.RequiredLocks
 	return result, nil
 }
 func (c Config) Clone() Config {

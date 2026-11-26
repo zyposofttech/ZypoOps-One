@@ -188,6 +188,9 @@ func TestServiceProcess(t *testing.T) {
 		key.Revoked = true
 		p.site.Config.Trust[kid] = key
 	}
+	if os.Getenv("ZOP2_ROTATE") == "1" {
+		delete(p.site.Config.Trust, "mock-job")
+	}
 	now := func() time.Time {
 		if raw := os.Getenv("ZOP2_TIME"); raw != "" {
 			v, err := time.Parse(time.RFC3339, raw)
@@ -246,6 +249,12 @@ func TestServiceProcess(t *testing.T) {
 		if os.Getenv("ZOP2_EXPECT_ACK_LOSS") == "1" {
 			if err == nil || err.Error() != "RECEIPT_OFFLINE" {
 				t.Fatal("expected lost acknowledgement", err)
+			}
+			return
+		}
+		if expected := os.Getenv("ZOP2_EXPECT_ERROR"); expected != "" {
+			if err == nil || err.Error() != expected {
+				t.Fatalf("expected %s, got %v", expected, err)
 			}
 			return
 		}
@@ -318,7 +327,7 @@ func TestCommittedDisconnect(t *testing.T) {
 	p := makePlan(dir, false)
 	startApps(t, dir, p)
 	ctx := context.Background()
-	central, err := OpenCentral(filepath.Join(dir, "central.db"), fixture.Scope, p.site.Config.Trust)
+	central, err := OpenCentral(filepath.Join(dir, "central.db"), fixture.Scope, p.site.Config.Trust, primaryEnrolment())
 	if err != nil {
 		t.Fatal(err)
 	}

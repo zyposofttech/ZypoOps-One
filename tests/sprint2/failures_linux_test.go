@@ -371,7 +371,7 @@ func TestLocalAuthority(t *testing.T) {
 	if _, err := client.ReadyVersion(context.Background(), ""); err == nil {
 		t.Fatal("wrong server credentials")
 	}
-	central, err := OpenCentral(filepath.Join(dir, "central.db"), fixture.Scope, p.site.Config.Trust)
+	central, err := OpenCentral(filepath.Join(dir, "central.db"), fixture.Scope, p.site.Config.Trust, primaryEnrolment())
 	if err != nil {
 		t.Fatal(err)
 	}

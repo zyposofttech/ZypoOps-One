@@ -39,6 +39,11 @@ func NewSite() *Site {
 		}
 		s.Config.Trust[kid] = rec
 	}
+	// Independently provision the two legacy release jobs before opening either ledger.
+	s.Config.BackupForJob = map[string]policy.BackupRequirement{}
+	for _, seq := range []int{1, 2} {
+		s.Config.BackupForJob[testID(fmt.Sprint(seq))] = policy.BackupRequirement{Product: "zyposono", Artifact: digest, BackupManifest: legacyBackupDigest(seq), Signer: "mock-backup", Categories: []string{"APP_CONFIG"}}
+	}
 	return s
 }
 func (s *Site) ReceiptKey() (string, crypto.PrivateKey, error) {
@@ -89,7 +94,11 @@ func (s *Site) Job(seq int, deploy bool, grants []string, kid string) policy.Bun
 		body["params"] = signing.Object{}
 	} else {
 		b.Manifest = Example("MC-05")
-		b.Backup = Example("MC-14")
+		backup := Doc(Example("MC-14"))
+		e := backup["body"].(signing.Object)
+		e["backup_age_seconds"] = 0
+		e["backup_manifest_sha256"] = legacyBackupDigest(seq)
+		b.Backup = s.Sign(backup, "mock-backup")
 		ids := []string{}
 		for _, label := range grants {
 			grant := Doc(Example("MC-09"))
@@ -109,4 +118,8 @@ func (s *Site) Job(seq int, deploy bool, grants []string, kid string) policy.Bun
 	}
 	b.Job = s.Sign(doc, kid)
 	return b
+}
+
+func legacyBackupDigest(seq int) string {
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(fmt.Sprintf("fixture legacy backup %d", seq))))
 }

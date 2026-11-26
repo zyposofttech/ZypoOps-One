@@ -17,7 +17,7 @@ func TestCentralReceiptBinding(t *testing.T) {
 	alternate.Scope = fixture.Scope
 	alternate.Purpose = "agent_receipt"
 	site.Config.Trust["rotated-job"] = alternate
-	c, err := OpenCentral(path, fixture.Scope, site.Config.Trust)
+	c, err := OpenCentral(path, fixture.Scope, site.Config.Trust, primaryEnrolment())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -125,5 +125,88 @@ func TestCentralReceiptBinding(t *testing.T) {
 	}
 	if err = c.accept(legacyWire); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func primaryEnrolment() Enrolment {
+	return Enrolment{fixture.Scope.Tenant, fixture.Scope.Site, fixture.Install, fixture.AgentID, "mock-receipt"}
+}
+
+func TestMultiSiteEnrolment(t *testing.T) {
+	site := fixture.NewSite()
+	path := filepath.Join(t.TempDir(), "central.db")
+	first := primaryEnrolment()
+	second := Enrolment{"88888888-8888-4888-8888-888888888888", "99999999-9999-4999-8999-999999999999", "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "rotated-job"}
+	otherScope := signing.Scope{Tenant: second.Tenant, Site: second.Site}
+	key := site.Config.Trust[second.ReceiptKey]
+	key.Scope = otherScope
+	key.Purpose = "agent_receipt"
+	site.Config.Trust[second.ReceiptKey] = key
+	a, e := OpenCentral(path, fixture.Scope, site.Config.Trust, first, second)
+	if e != nil {
+		t.Fatal(e)
+	}
+	a.Close()
+	for _, r := range []Enrolment{first, {first.Tenant, first.Site, second.Installation, first.Agent, first.ReceiptKey}} {
+		if db, err := OpenCentral(path, fixture.Scope, site.Config.Trust, r); err == nil {
+			db.Close()
+			t.Fatal("conflicting enrolment")
+		}
+	}
+	a, e = OpenCentral(path, fixture.Scope, site.Config.Trust)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer a.Close()
+	b, e := OpenCentral(path, otherScope, site.Config.Trust)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer b.Close()
+	var wires [][]byte
+	for i, r := range []Enrolment{first, second} {
+		c := []*Central{a, b}[i]
+		bundle := site.Deployment(i+1, "product", "LOCAL_BUSY", "r2", "APP_CONFIG", "auth")
+		j := fixture.Doc(bundle.Job)
+		j["tenant_id"] = r.Tenant
+		j["site_id"] = r.Site
+		body := j["body"].(signing.Object)
+		body["installation_id"] = r.Installation
+		body["agent_id"] = r.Agent
+		body["sequence"] = 1
+		bundle.Job = site.Sign(j, "mock-job")
+		if e = c.Submit(bundle); e != nil {
+			t.Fatal(e)
+		}
+		other := []*Central{b, a}[i]
+		if other.Submit(bundle) == nil {
+			t.Fatal("foreign job")
+		}
+		receipt := fixture.Doc(fixture.Example("MC-04"))
+		receipt["tenant_id"] = r.Tenant
+		receipt["site_id"] = r.Site
+		out := receipt["body"].(signing.Object)
+		out["job_id"] = body["job_id"]
+		out["stage"] = "VERIFIED"
+		binding, e := deployment.BundleDigest(bundle)
+		if e != nil {
+			t.Fatal(e)
+		}
+		out["execution_id"] = deployment.ExecutionID(binding)
+		out["observed_sha256"] = body["params"].(signing.Object)["manifest_sha256"]
+		wire := site.Sign(receipt, r.ReceiptKey)
+		wires = append(wires, wire)
+		if other.accept(wire) == nil {
+			t.Fatal("foreign signer")
+		}
+	}
+	for i, c := range []*Central{a, b} {
+		if err := c.accept(wires[i]); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var n int
+	if err := a.db.QueryRow("SELECT count(*) FROM terminal").Scan(&n); err != nil || n != 2 {
+		t.Fatal(n, err)
 	}
 }

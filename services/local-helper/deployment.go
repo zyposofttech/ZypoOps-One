@@ -39,11 +39,13 @@ func (h *Helper) dispatch(ctx context.Context, wire []byte) deployment.Reply {
 	var req deployment.Request
 	d := json.NewDecoder(bytes.NewReader(raw))
 	d.DisallowUnknownFields()
-	if d.Decode(&req) != nil || (req.Operation != "lookup" && req.Operation != "execute" && req.Operation != "abort") || len(req.Bundle.Grants) > 8 {
+	if d.Decode(&req) != nil || (req.Operation != "lookup" && req.Operation != "execute" && req.Operation != "abort" && req.Operation != "recover") || len(req.Bundle.Grants) > 8 {
 		return deny
 	}
 	b := req.Bundle
-	if _, err = signing.Verify("MC-03", b.Job, h.cfg.Scope, h.cfg.Trust); err != nil {
+	_, liveErr := signing.Verify("MC-03", b.Job, h.cfg.Scope, h.cfg.Trust)
+	historical := req.Operation == "recover" || liveErr != nil
+	if liveErr != nil && req.Operation != "lookup" && req.Operation != "recover" {
 		return deny
 	}
 	var job contracts.MC03
@@ -51,7 +53,7 @@ func (h *Helper) dispatch(ctx context.Context, wire []byte) deployment.Reply {
 		return deny
 	}
 	j := job.Body
-	if j.CommandType != "DEPLOY_RELEASE" || j.AgentId != h.cfg.Agent || j.InstallationId != h.cfg.Installation {
+	if job.TenantId != h.cfg.Scope.Tenant || job.SiteId != h.cfg.Scope.Site || j.CommandType != "DEPLOY_RELEASE" || j.AgentId != h.cfg.Agent || j.InstallationId != h.cfg.Installation {
 		return deny
 	}
 	var p contracts.DeployReleaseParams
@@ -62,6 +64,11 @@ func (h *Helper) dispatch(ctx context.Context, wire []byte) deployment.Reply {
 	if err != nil {
 		return deny
 	}
+	unlock, err := h.lockJob(ctx, j.JobId)
+	if err != nil {
+		return retry
+	}
+	defer unlock()
 	tx, err := h.db.BeginTx(ctx, nil)
 	if err != nil {
 		return retry
@@ -75,6 +82,45 @@ func (h *Helper) dispatch(ctx context.Context, wire []byte) deployment.Reply {
 	if blocked {
 		_ = tx.Commit() // Keep the rollback latch even when denying recovery.
 		return retry
+	}
+	// A historical request has no write authority at the product. Require the
+	// independently committed helper reservation and its original grant ledger.
+	if historical {
+		var execution string
+		var saved []byte
+		digest, e := policy.Digest(b.Job)
+		if e != nil {
+			return deny
+		}
+		err = tx.QueryRow(`SELECT execution,result FROM deployment_execution JOIN simulated_deployment USING(job)
+ WHERE job=? AND bundle=? AND digest=?`, j.JobId, binding, digest).Scan(&execution, &saved)
+		if err == sql.ErrNoRows {
+			return deny
+		}
+		if err != nil {
+			return retry
+		}
+		if len(j.ApprovalGrantIds) == 0 {
+			return deny
+		}
+		for _, id := range j.ApprovalGrantIds {
+			var n int
+			if err = tx.QueryRow("SELECT count(*) FROM consumed_grant WHERE id=?", id).Scan(&n); err != nil || n != 1 {
+				return deny
+			}
+		}
+		if err = tx.Commit(); err != nil {
+			return retry
+		}
+		if len(saved) > 0 {
+			var result deployment.Result
+			if json.Unmarshal(saved, &result) != nil || result.Execution != execution || result.Validate(b) != nil {
+				return deny
+			}
+			return deployment.Reply{Status: deployment.Done, Result: &result}
+		}
+		// lookup may observe a committed effect; recover additionally fences ABSENT.
+		return h.reconcile(ctx, req, job, p, execution)
 	}
 	var refused int
 	if err = tx.QueryRow("SELECT count(*) FROM refused_bundle WHERE binding=?", binding).Scan(&refused); err != nil {
@@ -122,16 +168,37 @@ func (h *Helper) dispatch(ctx context.Context, wire []byte) deployment.Reply {
 		if req.Operation == "abort" {
 			return refuse()
 		}
-		var pending int
-		// A terminal receipt is immutable. A possibly unhealthy release still
-		// holds the site until independently authorised recovery is available.
-		if err = tx.QueryRow(`SELECT count(*) FROM deployment_execution WHERE result IS NULL OR
-		    coalesce(json_extract(CAST(result AS TEXT),'$.state'),'') NOT IN ('SUCCEEDED','REJECTED')`).Scan(&pending); err != nil || pending != 0 {
+		if held, e := siteHeld(tx); e != nil || held {
 			return retry
 		}
-		approved, err := h.cfg.AuthorizeContext(ctx, b, now)
+		// Release the site writer before either LOCAL-01 endpoint is called.
+		if err = tx.Commit(); err != nil {
+			return retry
+		}
+		approved, preflightErr := h.cfg.AuthorizeContext(ctx, b, now)
+		if ctx.Err() != nil {
+			return retry
+		}
+		tx, err = h.db.BeginTx(ctx, nil)
 		if err != nil {
+			return retry
+		}
+		defer tx.Rollback()
+		now = h.now().UTC()
+		blocked, err = observeTime(tx, now)
+		if err != nil {
+			return retry
+		}
+		if blocked {
+			_ = tx.Commit()
+			return retry
+		}
+		if preflightErr != nil || !approved.Current(now) {
 			return refuse()
+		}
+		// Another job may have reserved the site while preflight was in flight.
+		if held, e := siteHeld(tx); e != nil || held {
+			return retry
 		}
 		if _, err = tx.Exec("SAVEPOINT admission"); err != nil {
 			return retry
@@ -178,7 +245,12 @@ func (h *Helper) reconcile(ctx context.Context, req deployment.Request, job cont
 	}
 
 	if observed.Phase == "ABSENT" {
-		if _, err = h.cfg.AuthorizeContext(ctx, b, h.now().UTC()); err != nil || req.Operation == "abort" {
+		if req.Operation == "recover" || req.Operation == "abort" {
+			observed, err = app.Fence(ctx, activation)
+			if err != nil {
+				return retry
+			}
+		} else if _, err = h.cfg.AuthorizeContext(ctx, b, h.now().UTC()); err != nil {
 			observed, err = app.Fence(ctx, activation)
 			if err != nil {
 				return retry
@@ -256,4 +328,12 @@ func effectDeadline(b policy.Bundle, expires string, manifest contracts.MC05) st
 		take(evidence.Body.LastSuccessAt, 24*time.Hour)
 	}
 	return floor.UTC().Format(time.RFC3339Nano)
+}
+
+// Unknown post-effect health and incomplete reservations both hold the site.
+func siteHeld(tx *sql.Tx) (bool, error) {
+	var n int
+	err := tx.QueryRow(`SELECT count(*) FROM deployment_execution WHERE result IS NULL OR
+ coalesce(json_extract(CAST(result AS TEXT),'$.state'),'') NOT IN ('SUCCEEDED','REJECTED')`).Scan(&n)
+	return n != 0, err
 }

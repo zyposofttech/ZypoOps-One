@@ -19,7 +19,23 @@ jobs:
       - run: pnpm generate && git diff --exit-code -- packages/management-contracts
       - run: pnpm db:generate
       - run: pnpm lint && pnpm typecheck && pnpm test && pnpm test:interop
-      - run: go vet ./... && go test -race -count=1 ./...
+      - run: go vet ./...
+      - name: Linux race regression and named test outcomes
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p .work/ci-evidence
+          printf '%s\n' "$GITHUB_SHA" > .work/ci-evidence/commit.txt
+          python3 scripts/verify-sprint2r-evidence.py --fingerprint > .work/ci-evidence/source.txt
+          go test -race -count=1 -json ./... | tee .work/go-test.jsonl | jq -c 'select(.Action == "pass" or .Action == "skip" or .Action == "fail")' > .work/ci-evidence/go-results.jsonl
+      - name: Retain candidate test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: foundation-evidence-${{ github.sha }}
+          path: .work/ci-evidence/
+          include-hidden-files: true
+          retention-days: 14
       - name: PostgreSQL 16 migrations and pooled RLS
         env:
           PGBIN: /usr/lib/postgresql/16/bin

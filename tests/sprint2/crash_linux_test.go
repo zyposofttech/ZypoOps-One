@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync/atomic"
 	"syscall"
 	"testing"
@@ -88,6 +89,15 @@ func TestCrashMatrix(t *testing.T) {
 		{"CR09-expired-reservation", "reserved", 2 * 365 * 24 * time.Hour, 0, false, false, 0},
 		{"CR09-stale-backup", "reserved", 25 * time.Hour, 0, false, false, 0},
 		{"CR09-revoked-grant", "reserved", 0, 0, false, false, 0},
+		{"CR09-revoked-ops-job-committed", "applied", 0, 1, false, false, 0},
+		{"CR09-revoked-ops-job-reserved", "reserved", 0, 0, false, false, 0},
+		{"CR09-revoked-ops-job-before-helper-admission", "pending", 0, 0, false, false, 0},
+		{"CR09-revoked-ops-job-terminal", "reply", 0, 1, false, false, 0},
+		{"CR09-rotated-ops-job-committed", "applied", 0, 1, false, false, 0},
+		{"CR09-revoked-ops-job-repeated-recovery", "applied", 0, 1, false, false, 2},
+		{"CR09-revoked-ops-job-outbox", "presend", 0, 1, false, false, 0},
+		{"CR09-revoked-receipt-key", "applied", 0, 1, false, false, 0},
+		{"CR09-revoked-ops-job-observation-offline", "applied", 0, 1, false, false, 0},
 		{"CR10", "applied", 0, 1, false, false, 2},
 	}
 	for _, tc := range cases {
@@ -103,7 +113,7 @@ func TestCrashMatrix(t *testing.T) {
 			}
 			job := fixture.Doc(b.Job)["body"].(signing.Object)["job_id"].(string)
 			execution := deployment.ExecutionID(binding)
-			central, err := OpenCentral(filepath.Join(dir, "central.db"), fixture.Scope, p.site.Config.Trust)
+			central, err := OpenCentral(filepath.Join(dir, "central.db"), fixture.Scope, p.site.Config.Trust, primaryEnrolment())
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -181,7 +191,7 @@ func TestCrashMatrix(t *testing.T) {
 			switch tc.cut {
 			case "pending":
 				reserved = 0
-			case "applied":
+			case "applied", "reply":
 				applied = 1
 			case "presend", "preack":
 				applied = 1
@@ -193,7 +203,11 @@ func TestCrashMatrix(t *testing.T) {
 			checkRow("agent.db", "SELECT binding FROM pending_deployment WHERE job_id=?", binding, job)
 			count("agent.db", "SELECT count(*) FROM approval_consumption", 1)
 			count("helper.db", "SELECT count(*) FROM consumed_grant", reserved)
-			count("helper.db", "SELECT count(*) FROM deployment_execution WHERE result IS NOT NULL", receipt)
+			helperTerminal := receipt
+			if tc.cut == "reply" {
+				helperTerminal = 1
+			}
+			count("helper.db", "SELECT count(*) FROM deployment_execution WHERE result IS NOT NULL", helperTerminal)
 			count(profile.Product+".db", "SELECT count(*) FROM effect", applied)
 			count("agent.db", "SELECT count(*) FROM execution_receipt", receipt)
 			count("central.db", "SELECT count(*) FROM terminal", accepted)
@@ -210,6 +224,18 @@ func TestCrashMatrix(t *testing.T) {
 				waitSocket(t, ppath)
 				if ok, e := p.apps[profile.Product].ReadyVersion(ctx, version); e != nil || !ok {
 					t.Fatal("lost release on product restart", e)
+				}
+			}
+			var unacked string
+			if receipt == 1 {
+				db, e := localstore.Open(filepath.Join(dir, "agent.db"))
+				if e != nil {
+					t.Fatal(e)
+				}
+				e = db.QueryRow("SELECT signed_receipt FROM execution_receipt WHERE job_id=?", job).Scan(&unacked)
+				db.Close()
+				if e != nil {
+					t.Fatal(e)
 				}
 			}
 			a.kill(t)
@@ -235,10 +261,21 @@ func TestCrashMatrix(t *testing.T) {
 			if tc.id == "CR09-revoked-grant" {
 				recovery = append(recovery, "ZOP2_REVOKE=mock-local")
 			}
+			if strings.Contains(tc.id, "revoked-ops-job") {
+				recovery = append(recovery, "ZOP2_REVOKE=mock-job")
+			}
+			if strings.Contains(tc.id, "rotated-ops-job") {
+				recovery = append(recovery, "ZOP2_ROTATE=1")
+			}
+			if tc.id == "CR09-revoked-receipt-key" {
+				recovery = append(recovery, "ZOP2_REVOKE=mock-receipt")
+			}
 			h = launch(t, dir, "helper", "", "", false, recovery...)
 			waitSocket(t, hpath)
-			if reserved == 1 && receipt == 0 {
-				r := helperReply(t, deployment.Socket{Endpoint: endpoint(hpath)}, "execute", p.jobs[1])
+			if reserved == 1 && helperTerminal == 0 {
+				next := p.jobs[1]
+				next.Job = p.site.Sign(fixture.Doc(next.Job), "rotated-job")
+				r := helperReply(t, deployment.Socket{Endpoint: endpoint(hpath)}, "execute", next)
 				if r.Status != deployment.Retry {
 					t.Fatal("pending execution lost its admission hold", r)
 				}
@@ -248,14 +285,55 @@ func TestCrashMatrix(t *testing.T) {
 				release <- struct{}{}
 			}
 			for range tc.disconnects {
-				a = launch(t, dir, "agent", hpath, server.URL, false, append(cut("reply"), sample)...)
+				a = launch(t, dir, "agent", hpath, server.URL, false, append(cut("reply"), recovery...)...)
 				wait("reply")
 				a.kill(t)
+			}
+			if tc.id == "CR09-revoked-ops-job-observation-offline" {
+				product.kill(t)
+				launch(t, dir, "agent", hpath, server.URL, false, append(recovery, "ZOP2_EXPECT_ERROR=HISTORICAL_RECOVERY_REQUIRED")...).wait(t)
+				count("agent.db", "SELECT count(*) FROM received_job WHERE state='RUNNING'", 1)
+				count("agent.db", "SELECT count(*) FROM deployment_recovery_hold", 1)
+				count("helper.db", "SELECT count(*) FROM deployment_execution WHERE result IS NULL", 1)
+				count(profile.Product+".db", "SELECT count(*) FROM effect", 1)
+				count("central.db", "SELECT count(*) FROM terminal", 0)
+				next := p.jobs[1]
+				next.Job = p.site.Sign(fixture.Doc(next.Job), "rotated-job")
+				if r := helperReply(t, deployment.Socket{Endpoint: endpoint(hpath)}, "execute", next); r.Status != deployment.Retry {
+					t.Fatal("offline observation released hold", r)
+				}
+				product = launch(t, dir, "product", "", "", false)
+				waitSocket(t, ppath)
+			}
+			if tc.id == "CR09-revoked-ops-job-before-helper-admission" || tc.id == "CR09-revoked-receipt-key" {
+				reason := "HISTORICAL_RECOVERY_REQUIRED"
+				if tc.id == "CR09-revoked-receipt-key" {
+					reason = "UNTRUSTED_KEY"
+				}
+				launch(t, dir, "agent", hpath, server.URL, false, append(recovery, "ZOP2_EXPECT_ERROR="+reason)...).wait(t)
+				count("agent.db", "SELECT count(*) FROM received_job WHERE state='RUNNING'", 1)
+				count("agent.db", "SELECT count(*) FROM deployment_recovery_hold", 1)
+				count("agent.db", "SELECT count(*) FROM approval_consumption", 1)
+				count("helper.db", "SELECT count(*) FROM consumed_grant", reserved)
+				count("helper.db", "SELECT count(*) FROM deployment_execution", reserved)
+				count("agent.db", "SELECT count(*) FROM execution_receipt", 0)
+				count("central.db", "SELECT count(*) FROM terminal", 0)
+				if reserved == 0 {
+					r := helperReply(t, deployment.Socket{Endpoint: endpoint(hpath)}, "execute", b)
+					if r.Status != deployment.Denied {
+						t.Fatal(r)
+					}
+				}
+				count(profile.Product+".db", "SELECT count(*) FROM effect", tc.wantEffects)
+				h.kill(t)
+				product.kill(t)
+				return
 			}
 			if !tc.agentFirst {
 				a = launch(t, dir, "agent", hpath, server.URL, false, recovery...)
 			}
 			a.wait(t)
+			count("agent.db", "SELECT count(*) FROM deployment_recovery_hold", 0)
 			count("agent.db", "SELECT count(*) FROM approval_consumption", 1)
 			count("helper.db", "SELECT count(*) FROM consumed_grant", 1)
 			count("helper.db", "SELECT count(*) FROM deployment_execution", 1)
@@ -265,6 +343,9 @@ func TestCrashMatrix(t *testing.T) {
 			var wire []byte
 			if err = central.db.QueryRow("SELECT receipt FROM terminal WHERE job=? AND execution=?", job, execution).Scan(&wire); err != nil {
 				t.Fatal(err)
+			}
+			if unacked != "" && unacked != string(wire) {
+				t.Fatal("changed original outbox bytes")
 			}
 			doc, e := signing.Verify("MC-04", wire, fixture.Scope, p.site.Config.Trust)
 			if e != nil {
@@ -312,6 +393,42 @@ func TestCrashMatrix(t *testing.T) {
 			}
 			count(profile.Product+".db", "SELECT count(*) FROM effect", tc.wantEffects)
 			count(profile.Product+".db", "SELECT count(*) FROM no_effect", 1-tc.wantEffects)
+			if strings.Contains(tc.id, "ops-job") {
+				sock := deployment.Socket{Endpoint: endpoint(hpath)}
+				if r := helperReply(t, sock, "execute", b); r.Status != deployment.Denied {
+					t.Fatal("revoked job executed", r)
+				}
+				if r := helperReply(t, sock, "execute", p.jobs[1]); r.Status != deployment.Denied {
+					t.Fatal("new job used revoked authority", r)
+				}
+				changed := b
+				changed.Manifest = p.jobs[1].Manifest
+				if r := helperReply(t, sock, "recover", changed); r.Status != deployment.Denied {
+					t.Fatal("substituted signed artifact", r)
+				}
+				if r := helperReply(t, sock, "recover", p.jobs[1]); r.Status != deployment.Denied {
+					t.Fatal("unknown admission", r)
+				}
+				for _, field := range []string{"tenant_id", "site_id", "installation_id", "agent_id", "nonce"} {
+					d := fixture.Doc(b.Job)
+					body := d["body"].(signing.Object)
+					if field == "tenant_id" || field == "site_id" {
+						d[field] = "77777777-7777-4777-8777-777777777777"
+					} else {
+						body[field] = "77777777-7777-4777-8777-777777777777"
+						if field == "nonce" {
+							body[field] = "77777777777747778777777777777777"
+						}
+					}
+					changed = b
+					changed.Job = p.site.Sign(d, "mock-job")
+					if r := helperReply(t, sock, "recover", changed); r.Status != deployment.Denied {
+						t.Fatal(field, r)
+					}
+				}
+				count("helper.db", "SELECT count(*) FROM consumed_grant", 1)
+				count(profile.Product+".db", "SELECT count(*) FROM effect", tc.wantEffects)
+			}
 			result := helperReply(t, deployment.Socket{Endpoint: endpoint(hpath)}, "lookup", b)
 			if result.Result == nil || result.Result.State != state || result.Result.Execution != execution {
 				t.Fatal(result)

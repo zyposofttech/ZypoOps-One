@@ -3,9 +3,11 @@ package helper
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"sync"
 	"time"
 	"zyposoft.local/operations/packages/local-policy"
 	"zyposoft.local/operations/packages/local-store"
@@ -14,11 +16,13 @@ import (
 )
 
 type Helper struct {
-	db       *sql.DB
-	cfg      policy.Config
-	uid, gid uint32
-	now      func() time.Time
-	products pl.Registry
+	db         *sql.DB
+	cfg        policy.Config
+	uid, gid   uint32
+	now        func() time.Time
+	products   pl.Registry
+	jobsMu     sync.Mutex
+	activeJobs map[string]chan struct{}
 }
 
 func Open(path string, c policy.Config, uid, gid uint32, now func() time.Time) (*Helper, error) {
@@ -48,7 +52,7 @@ func Open(path string, c policy.Config, uid, gid uint32, now func() time.Time) (
 		db.Close()
 		return nil, err
 	}
-	return &Helper{db: db, cfg: c.Clone(), uid: uid, gid: gid, now: now}, nil
+	return &Helper{db: db, cfg: c.Clone(), activeJobs: make(map[string]chan struct{}), uid: uid, gid: gid, now: now}, nil
 }
 func (h *Helper) Close() error { return h.db.Close() }
 func (h *Helper) apply(raw []byte, uid, gid uint32) string {
@@ -74,6 +78,23 @@ func (h *Helper) apply(raw []byte, uid, gid uint32) string {
 	if d.Decode(&b) != nil || len(b.Grants) > 8 {
 		return "INVALID_REQUEST"
 	}
+	initial := h.now().UTC()
+	clockTx, err := h.db.Begin()
+	if err != nil {
+		return "STORE_UNAVAILABLE"
+	}
+	stopped, err := observeTime(clockTx, initial)
+	if err != nil {
+		clockTx.Rollback()
+		return "STORE_UNAVAILABLE"
+	}
+	if err = clockTx.Commit(); err != nil {
+		return "STORE_UNAVAILABLE"
+	}
+	if stopped {
+		return "CLOCK_UNTRUSTED"
+	}
+	approved, preflightErr := h.cfg.Authorize(b, initial)
 	tx, err := h.db.Begin()
 	if err != nil {
 		return "STORE_UNAVAILABLE"
@@ -93,7 +114,10 @@ func (h *Helper) apply(raw []byte, uid, gid uint32) string {
 	if _, err = tx.Exec("SAVEPOINT deployment"); err != nil {
 		return "STORE_UNAVAILABLE"
 	}
-	code := h.simulate(tx, b, now)
+	code := "OPERATION_DENIED"
+	if preflightErr == nil && approved.Current(now) && approved.Job.Body.CommandType == "DEPLOY_RELEASE" {
+		code = reserve(tx, approved)
+	}
 	if code != "SIMULATED" {
 		if _, err = tx.Exec("ROLLBACK TO deployment"); err != nil {
 			return "STORE_UNAVAILABLE"
@@ -103,13 +127,6 @@ func (h *Helper) apply(raw []byte, uid, gid uint32) string {
 		return "STORE_UNAVAILABLE"
 	}
 	return code
-}
-func (h *Helper) simulate(tx *sql.Tx, b policy.Bundle, now time.Time) string {
-	approved, err := h.cfg.Authorize(b, now)
-	if err != nil || approved.Job.Body.CommandType != "DEPLOY_RELEASE" {
-		return "OPERATION_DENIED"
-	}
-	return reserve(tx, approved)
 }
 func observeTime(tx *sql.Tx, now time.Time) (bool, error) {
 	_, err := tx.Exec("INSERT INTO time_floor VALUES(1,?,0) ON CONFLICT(singleton) DO UPDATE SET blocked=(blocked OR excluded.utc<utc),utc=max(utc,excluded.utc)", now.UnixNano())
@@ -138,4 +155,25 @@ func reserve(tx *sql.Tx, approved policy.Authorized) string {
 		return "REPLAY_DENIED"
 	}
 	return "SIMULATED"
+}
+
+// lockJob serializes reconciliation of one identity without delaying another
+// job's read of the durable site hold. Entries exist only for active handlers.
+func (h *Helper) lockJob(ctx context.Context, id string) (func(), error) {
+	for {
+		h.jobsMu.Lock()
+		done := h.activeJobs[id]
+		if done == nil {
+			done = make(chan struct{})
+			h.activeJobs[id] = done
+			h.jobsMu.Unlock()
+			return func() { h.jobsMu.Lock(); delete(h.activeJobs, id); close(done); h.jobsMu.Unlock() }, nil
+		}
+		h.jobsMu.Unlock()
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-done:
+		}
+	}
 }
