@@ -1,0 +1,1 @@
+GO v1.2 TEST VECTOR SUITE: PASS 15/15 signed contracts + 2 adversarial signed negatives + duplicate-key checks (restricted ASCII fixture semantics).

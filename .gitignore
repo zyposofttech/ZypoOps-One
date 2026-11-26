@@ -5,4 +5,3 @@ coverage/
 .pnpm-store/
 *.zip
 *.csv
-docs/audit/*

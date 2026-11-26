@@ -1,0 +1,43 @@
+
+> zyposoft-operations-platform@ test D:\ZypoOps-One
+> node --test tests/contract/*.test.ts
+
+✔ site signer validates the approval shape before issuing a usable attestation (11.6665ms)
+✔ golden MC-01 (2.1645ms)
+✔ golden MC-02 (1.9572ms)
+✔ golden MC-03 (4.3449ms)
+✔ golden MC-04 (2.2166ms)
+✔ golden MC-05 (2.7622ms)
+✔ golden MC-06 (2.4504ms)
+✔ golden MC-07 (1.9949ms)
+✔ golden MC-08 (2.2141ms)
+✔ golden MC-09 (2.221ms)
+✔ golden MC-10 (2.7362ms)
+✔ golden MC-11 (2.2214ms)
+✔ golden MC-12 (1.9626ms)
+✔ golden MC-13 (1.9524ms)
+✔ golden MC-14 (1.6807ms)
+✔ golden AUX-01 (1.5077ms)
+✔ CT-O0-17-CROSS_SITE (0.8044ms)
+✔ CT-O0-07-WRONG_PURPOSE (0.5022ms)
+✔ new central signature cannot move site consent (2.0695ms)
+✔ JCS shared corpus and wire budgets (2.2467ms)
+✔ signature, trust and pinned wire version rejection (3.0425ms)
+✔ MC-10 nullable reference, length boundary and LOCAL-01 field rejection (5.7598ms)
+✔ command REQUEST_HEALTH (1.0684ms)
+✔ command APPLY_SITE_CONFIG (0.6218ms)
+✔ command DEPLOY_RELEASE (0.6588ms)
+✔ command VERIFY_DEPLOYMENT (0.5269ms)
+✔ command ROTATE_AGENT_CERT (0.5645ms)
+✔ command APPLY_DEVICE_PROFILE (0.5816ms)
+✔ command COLLECT_DIAGNOSTICS (0.5307ms)
+✔ command PAUSE_ROLLOUT (0.5383ms)
+✔ command REVOKE_SUPPORT_SESSION (0.4661ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 704.6142

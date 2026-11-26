@@ -1,0 +1,12 @@
+[
+  {
+    "path": "packages\\management-contracts\\types_generated.go",
+    "expected_sha256": "5b73d599888562f09da9fbe0c28ccf3aeda3dad52cef0477e4fd2d8cd9757c45",
+    "generated_sha256": "5b73d599888562f09da9fbe0c28ccf3aeda3dad52cef0477e4fd2d8cd9757c45"
+  },
+  {
+    "path": "packages\\management-contracts\\generated\\types.ts",
+    "expected_sha256": "a06bcf1af4c1ecae1dde17007f0cf95adbf4a0a793f08144d764a9f9becb835e",
+    "generated_sha256": "a06bcf1af4c1ecae1dde17007f0cf95adbf4a0a793f08144d764a9f9becb835e"
+  }
+]

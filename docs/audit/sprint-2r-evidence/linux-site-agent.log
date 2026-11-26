@@ -1,0 +1,30 @@
+=== RUN   TestSequenceClockAndConsent
+--- PASS: TestSequenceClockAndConsent (0.10s)
+=== RUN   TestDisconnectedReceiptRecovery
+--- PASS: TestDisconnectedReceiptRecovery (0.06s)
+=== RUN   TestFaultRecovery100
+--- PASS: TestFaultRecovery100 (1.16s)
+=== RUN   TestProcessDeath
+--- PASS: TestProcessDeath (0.08s)
+=== RUN   TestDistinctJobCannotReuseIdempotencyKey
+--- PASS: TestDistinctJobCannotReuseIdempotencyKey (0.05s)
+=== RUN   TestExternalKillRecovery
+=== RUN   TestExternalKillRecovery/before_commit
+=== RUN   TestExternalKillRecovery/after_commit
+--- PASS: TestExternalKillRecovery (0.15s)
+    --- PASS: TestExternalKillRecovery/before_commit (0.07s)
+    --- PASS: TestExternalKillRecovery/after_commit (0.07s)
+=== RUN   TestRebootAndAuthenticatedClockRecovery
+=== RUN   TestRebootAndAuthenticatedClockRecovery/ordinary_reboot
+2026/11/25 15:44:03 http: TLS handshake error from 127.0.0.1:53524: remote error: tls: bad certificate
+=== RUN   TestRebootAndAuthenticatedClockRecovery/wall-clock_rollback
+2026/11/25 15:44:03 http: TLS handshake error from 127.0.0.1:59198: remote error: tls: bad certificate
+=== RUN   TestRebootAndAuthenticatedClockRecovery/monotonic_regression
+2026/11/25 15:44:03 http: TLS handshake error from 127.0.0.1:53168: remote error: tls: bad certificate
+--- PASS: TestRebootAndAuthenticatedClockRecovery (0.22s)
+    --- PASS: TestRebootAndAuthenticatedClockRecovery/ordinary_reboot (0.07s)
+    --- PASS: TestRebootAndAuthenticatedClockRecovery/wall-clock_rollback (0.08s)
+    --- PASS: TestRebootAndAuthenticatedClockRecovery/monotonic_regression (0.07s)
+=== RUN   TestRejectedJobPreservesClockWatermark
+--- PASS: TestRejectedJobPreservesClockWatermark (0.04s)
+PASS

@@ -1,0 +1,1 @@
+SQLITE TESTS: PASS (DDL + replay uniqueness + key rotation independence + receipt/progress + integrity)

@@ -1,0 +1,4 @@
+
+> zyposoft-operations-platform@ lint D:\ZypoOps-One
+> eslint packages services tests scripts
+

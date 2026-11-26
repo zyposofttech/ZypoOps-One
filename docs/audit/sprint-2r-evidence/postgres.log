@@ -1,0 +1,72 @@
+The files belonging to this database system will be owned by user "Jiten".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+creating directory D:/ZypoOps-One/.work/pg16-42Ga5x/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... windows
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Asia/Calcutta
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    ^"C^:^\Program^ Files^\PostgreSQL^\16^\bin^\pg^_ctl^" -D ^"D^:^\ZypoOps^-One^\^.work^\pg16^-42Ga5x^\data^" -l logfile start
+
+waiting for server to start.... done
+server started
+Prisma schema loaded from packages\database\schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "zop" at "127.0.0.1:59875"
+
+2 migrations found in prisma/migrations
+
+Applying migration `001_o0`
+Applying migration `002_runtime`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 001_o0/
+    └─ migration.sql
+  └─ 002_runtime/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+Prisma schema loaded from packages\database\schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "zop" at "127.0.0.1:59875"
+
+2 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Prisma schema loaded from packages\database\schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to .\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client in 200ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+✔ migration identity differs from nonowner runtime with FORCE RLS (94.5672ms)
+✔ raw SQL without context fails closed on reads and writes (7.0802ms)
+✔ same-tenant other site and cross-tenant reads and writes (14.3304ms)
+✔ 120 concurrent Nest/Prisma transactions across a four-connection pool (157.5076ms)
+✔ foreign keys, idempotency, maker/checker, transitions and atomic single-use consumption (63.664ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1150.6719
+waiting for server to shut down.... done
+server stopped

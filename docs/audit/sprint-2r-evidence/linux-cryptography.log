@@ -1,0 +1,59 @@
+=== RUN   TestCorpus
+--- PASS: TestCorpus (0.00s)
+=== RUN   TestGolden
+=== RUN   TestGolden/MC-01
+=== RUN   TestGolden/MC-02
+=== RUN   TestGolden/MC-03
+=== RUN   TestGolden/MC-04
+=== RUN   TestGolden/MC-05
+=== RUN   TestGolden/MC-06
+=== RUN   TestGolden/MC-07
+=== RUN   TestGolden/MC-08
+=== RUN   TestGolden/MC-09
+=== RUN   TestGolden/MC-10
+=== RUN   TestGolden/MC-11
+=== RUN   TestGolden/MC-12
+=== RUN   TestGolden/MC-13
+=== RUN   TestGolden/MC-14
+=== RUN   TestGolden/AUX-01
+--- PASS: TestGolden (0.03s)
+    --- PASS: TestGolden/MC-01 (0.02s)
+    --- PASS: TestGolden/MC-02 (0.00s)
+    --- PASS: TestGolden/MC-03 (0.00s)
+    --- PASS: TestGolden/MC-04 (0.00s)
+    --- PASS: TestGolden/MC-05 (0.00s)
+    --- PASS: TestGolden/MC-06 (0.00s)
+    --- PASS: TestGolden/MC-07 (0.00s)
+    --- PASS: TestGolden/MC-08 (0.00s)
+    --- PASS: TestGolden/MC-09 (0.00s)
+    --- PASS: TestGolden/MC-10 (0.00s)
+    --- PASS: TestGolden/MC-11 (0.00s)
+    --- PASS: TestGolden/MC-12 (0.00s)
+    --- PASS: TestGolden/MC-13 (0.00s)
+    --- PASS: TestGolden/MC-14 (0.00s)
+    --- PASS: TestGolden/AUX-01 (0.00s)
+=== RUN   TestNegative
+--- PASS: TestNegative (0.00s)
+=== RUN   TestGoRejections
+=== RUN   TestGoRejections/revoked
+=== RUN   TestGoRejections/unknown
+=== RUN   TestGoRejections/wrong_purpose
+=== RUN   TestGoRejections/alg_substitution
+=== RUN   TestGoRejections/DER_length
+=== RUN   TestGoRejections/absent_signature
+=== RUN   TestGoRejections/tamper
+=== RUN   TestGoRejections/unknown_version
+=== RUN   TestGoRejections/wrong_site
+--- PASS: TestGoRejections (0.00s)
+    --- PASS: TestGoRejections/revoked (0.00s)
+    --- PASS: TestGoRejections/unknown (0.00s)
+    --- PASS: TestGoRejections/wrong_purpose (0.00s)
+    --- PASS: TestGoRejections/alg_substitution (0.00s)
+    --- PASS: TestGoRejections/DER_length (0.00s)
+    --- PASS: TestGoRejections/absent_signature (0.00s)
+    --- PASS: TestGoRejections/tamper (0.00s)
+    --- PASS: TestGoRejections/unknown_version (0.00s)
+    --- PASS: TestGoRejections/wrong_site (0.00s)
+=== RUN   TestHygieneBoundaries
+--- PASS: TestHygieneBoundaries (0.00s)
+PASS

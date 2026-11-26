@@ -1,0 +1,825 @@
+{
+  "baseline_commit": "8f9d88be2013c9b014202fc2435ec1368d83575c",
+  "source_sha256": "3efaa1b6ae9045d0b10b978e1103af4bcd6182e8aedde4f258859b6b61c4f9c6",
+  "source_method": "scripts/verify-sprint2r-evidence.py --fingerprint",
+  "evidence_type": "unsigned local execution and archived hosted baseline metadata",
+  "hosted_baseline_run": 45594545137,
+  "hosted_candidate_run": null,
+  "runs": [
+    {
+      "log": "archived-go.log",
+      "command": [
+        "go.exe",
+        "run",
+        ".work/pack/tests/verify_vectors.go",
+        ".work/pack"
+      ],
+      "group": "fixtures",
+      "exit_code": 0,
+      "elapsed_seconds": 1.297,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "0d2ed56e42d1816409d77735d839521106c9465c9fbfa3f5caa7595e547e2f08",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "archived-node.log",
+      "command": [
+        "node",
+        ".work/pack/tests/verify_vectors.mjs"
+      ],
+      "group": "fixtures",
+      "exit_code": 0,
+      "elapsed_seconds": 0.109,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "e9476c52dbca752c170ab479c9de4481cec6c40049dbbe3196296c3ecd0dadd0",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "binding-comparison.log",
+      "command": [
+        "compare",
+        "LF-normalized checked-in and scratch generator output for both target paths"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "working_directory": "D:\\ZypoOps-One",
+      "sha256": "9d94c9261def94247ebd7504de43632d9a1daea6c37ff4992c5b53930665e757",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "build-linux.log",
+      "command": [
+        "go.exe",
+        "test",
+        "-c",
+        "-o",
+        ".work/s2r/final/linux/",
+        "./..."
+      ],
+      "group": "build",
+      "exit_code": 0,
+      "elapsed_seconds": 3.5,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {
+        "GOOS": "linux",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "0"
+      },
+      "sha256": "4b2960c9411d9def906d6e0a438713b9c3892be105d28d2758000a44ce5b7431",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "build-race-linux.log",
+      "command": [
+        "go.exe",
+        "test",
+        "-race",
+        "-c",
+        "-ldflags",
+        "-linkmode=external -extldflags=-Wl,--dynamic-linker,/mnt/host/d/ZypoOps-One/.work/linux-glibc/ld-linux-x86-64.so.2,-rpath,/mnt/host/d/ZypoOps-One/.work/linux-glibc",
+        "-o",
+        ".work/s2r/final/linux-race/",
+        "./..."
+      ],
+      "group": "build",
+      "exit_code": 0,
+      "elapsed_seconds": 5.203,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {
+        "GOOS": "linux",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "1",
+        "CC": "D:/ZypoOps-One/.work/zigtool/ziglang/zig.exe cc -target x86_64-linux-gnu.2.36",
+        "ZIG_GLOBAL_CACHE_DIR": "D:\\ZypoOps-One\\.work\\zig-global",
+        "ZIG_LOCAL_CACHE_DIR": "D:\\ZypoOps-One\\.work\\zig-local"
+      },
+      "sha256": "4b2960c9411d9def906d6e0a438713b9c3892be105d28d2758000a44ce5b7431",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "contract-diff.log",
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "--",
+        "packages/management-contracts"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.078,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "format.log",
+      "command": [
+        "gofmt.exe",
+        "-l",
+        "packages/local-policy/backup_test.go",
+        "packages/local-policy/policy.go",
+        "services/local-helper/deployment.go",
+        "services/local-helper/helper.go",
+        "services/local-helper/socket_linux.go",
+        "services/site-agent/agent.go",
+        "services/site-agent/deployment.go",
+        "tests/fixtures/site.go",
+        "tests/sprint2/central.go",
+        "tests/sprint2/central_test.go",
+        "tests/sprint2/crash_linux_test.go",
+        "tests/sprint2/failures_linux_test.go",
+        "tests/sprint2/remediation_linux_test.go",
+        "tests/sprint2/workflow_linux_test.go"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.047,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "generate-scratch.log",
+      "command": [
+        "node",
+        "D:\\ZypoOps-One\\scripts\\generate-types.mjs"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.125,
+      "working_directory": "D:\\ZypoOps-One\\.work\\s2r\\drift",
+      "environment_overrides": {},
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "git-diff-check.log",
+      "command": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.156,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "go-version.log",
+      "command": [
+        "go.exe",
+        "version"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.094,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "bd74e61f96314b4c2e72e63319395345bc2817752bbdd3fc177a9edb2eb2ba14",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "go-windows.log",
+      "command": [
+        "go.exe",
+        "test",
+        "-json",
+        "-count=1",
+        "./..."
+      ],
+      "group": "windows",
+      "exit_code": 0,
+      "elapsed_seconds": 8.578,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "ff8428bfe7c04f78b2f2a764ea5a95fcabeda14d14e6cd08f0397c44f0dcb83d",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 18,
+        "pass_sub": 68
+      }
+    },
+    {
+      "log": "hosted-baseline.log",
+      "command": [
+        "gh",
+        "run",
+        "view",
+        "45594545137",
+        "--repo",
+        "zyposofttech/ZypoOps-One",
+        "--json",
+        "headSha,conclusion,databaseId,jobs,url"
+      ],
+      "group": "hosted_baseline",
+      "exit_code": 0,
+      "working_directory": "D:\\ZypoOps-One",
+      "sha256": "2d4c7f1bac2b584b382a5c5eca7d9b5bb60945c5de694baed7365e4ea9fe4b42",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "linux-cryptography.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux/cryptography.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 0.141,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "cbf343c61571a3bdff30906dbd12fae38d2883e9c2fe8d7d82a21361bc9f177c",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 5,
+        "pass_sub": 24
+      }
+    },
+    {
+      "log": "linux-identity.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "id"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 0.094,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "f920e643e63ab91fd70b7291242b818e8b6250edf6242a7651439a54107457ac",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "linux-local-helper.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux/local-helper.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 0.375,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "c7baa818000072cb0f94b0862087fa4ec4db64e62f61257d0df91fbffe8a6da3",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 3,
+        "pass_sub": 16
+      }
+    },
+    {
+      "log": "linux-local-policy.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux/local-policy.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 0.219,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "37b128a0d4bc065e1ca09cde248407d6c0879b4149dd548c09f1cc9f0dfcab99",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 1,
+        "pass_sub": 26
+      }
+    },
+    {
+      "log": "linux-platform.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "uname",
+        "-srm"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 0.218,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "04fbe132d7dc364c01c5f64b17a8d6cbf88b3164a9816284a5cf17a132e7eedd",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "linux-race-cryptography.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux-race/cryptography.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 1.328,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "63bc8b4ef7d10f5c251eac1ea2ae37f840e23b81906923b882c8ff693718f36b",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 5,
+        "pass_sub": 24
+      }
+    },
+    {
+      "log": "linux-race-local-helper.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux-race/local-helper.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 2.078,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "4525a83cf895e3e06941699e5e253605cdd0ed94f663dde793b0cbd2db387fff",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 3,
+        "pass_sub": 16
+      }
+    },
+    {
+      "log": "linux-race-local-policy.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux-race/local-policy.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 2.516,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "f8d32e0d6715e24a5452127aa9d49d98da28a3c2d53d3a2f34ee8490f6fcb1eb",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 1,
+        "pass_sub": 26
+      }
+    },
+    {
+      "log": "linux-race-site-agent.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux-race/site-agent.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 10.672,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "4f1a747ebdbc9a8d605b59997ea916003e549ec82ad8d6a87e217c240e916ac1",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 8,
+        "pass_sub": 5
+      }
+    },
+    {
+      "log": "linux-race-sprint2.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux-race/sprint2.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 102.422,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "49ade2ab31e4383a1cd600cf6f954280c92d8bc8875a4b757f3c81d12e0b5176",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 19,
+        "pass_sub": 121,
+        "skip_parent": 1
+      }
+    },
+    {
+      "log": "linux-site-agent.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux/site-agent.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 1.984,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "fc51efe5eceb64dd1713f3b64f2a4c0b4e7c793d5710f85b6a5a2d3877f2db75",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 8,
+        "pass_sub": 5
+      }
+    },
+    {
+      "log": "linux-sprint2.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/final/linux/sprint2.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "group": "linux",
+      "exit_code": 0,
+      "elapsed_seconds": 24.578,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "88b3e2d82aece7ef6fa2c7f7e85c82d731cfe44162bb1270b2231affffad1eb5",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_parent": 19,
+        "pass_sub": 121,
+        "skip_parent": 1
+      }
+    },
+    {
+      "log": "local_api_contract_tests.log",
+      "command": [
+        "C:\\Users\\Jiten\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        ".work/pack/tests/local_api_contract_tests.py"
+      ],
+      "group": "fixtures",
+      "exit_code": 0,
+      "elapsed_seconds": 0.454,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "ab180f9cfd3b12642047ee2dbf5f8dabcd6a041bcad592d345ef2219dbe564a0",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "node-lint.log",
+      "command": [
+        "pnpm.cmd",
+        "lint"
+      ],
+      "group": "node",
+      "exit_code": 0,
+      "elapsed_seconds": 4.953,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "e525215478153869d9d453ddda3298f60e4afc9c36b05fefafcd6bbca66e81da",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "node-test-interop.log",
+      "command": [
+        "pnpm.cmd",
+        "test:interop"
+      ],
+      "group": "node",
+      "exit_code": 0,
+      "elapsed_seconds": 10.094,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "24a38b568221d6107fbda6e758602c410a01bc84f9b8b1743abc18340c597070",
+      "expected_exit_code": 0,
+      "test_counts": {
+        "tests": 2,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "log": "node-test.log",
+      "command": [
+        "pnpm.cmd",
+        "test"
+      ],
+      "group": "node",
+      "exit_code": 0,
+      "elapsed_seconds": 1.453,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "f491b27f554e65d97e3ff792c7aaf4ffeb3364a2acc89fca3b60ac040aacb22b",
+      "expected_exit_code": 0,
+      "test_counts": {
+        "tests": 31,
+        "pass": 31,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "log": "node-typecheck.log",
+      "command": [
+        "pnpm.cmd",
+        "typecheck"
+      ],
+      "group": "node",
+      "exit_code": 0,
+      "elapsed_seconds": 3.172,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "8aef6a41fde4293a7754a8bd473580baeae39e21d693ea7a17174c72dfafb61d",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "node-version.log",
+      "command": [
+        "node",
+        "-v"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.093,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "db3d2feb713e4945f390f5d41fb44fd8aaf6b8d4c564a2af9e63262172fb5a98",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "pg-version.log",
+      "command": [
+        "C:/Program Files/PostgreSQL/16/bin/postgres.exe",
+        "--version"
+      ],
+      "group": "pg",
+      "exit_code": 0,
+      "elapsed_seconds": 0.031,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "8b260b7582a472d30c2e05ed1216aab2cea1a24052393520c6205beef4b53815",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "pnpm-version.log",
+      "command": [
+        "pnpm.cmd",
+        "--version"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 1.313,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "f71ff3f5176cd06dce75ef9c6a6a4ea9eacefa43f5bd92c6cc9322dd2c8216a3",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "postgres.log",
+      "command": [
+        "node",
+        "infrastructure/local-development/tenancy.mjs"
+      ],
+      "group": "pg",
+      "exit_code": 0,
+      "elapsed_seconds": 24.531,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {
+        "PGBIN": "C:/Program Files/PostgreSQL/16/bin"
+      },
+      "sha256": "b2cae595be936eef3b860492644692985c5657b15d24d1b7ff1b961e8974e8c5",
+      "expected_exit_code": 0,
+      "test_counts": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "log": "race-windows.log",
+      "command": [
+        "go.exe",
+        "test",
+        "-race",
+        "-json",
+        "-count=1",
+        "./..."
+      ],
+      "group": "windows",
+      "exit_code": 0,
+      "elapsed_seconds": 22.843,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {
+        "CGO_ENABLED": "1",
+        "CC": "clang"
+      },
+      "sha256": "13f1bbe6ba24795d0b0d4334d026ec3ed2897de93439e17566a1012d48392053",
+      "expected_exit_code": 0,
+      "named_outcome_counts": {
+        "pass_sub": 68,
+        "pass_parent": 18
+      }
+    },
+    {
+      "log": "red-linux.log",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/s2r/baseline.test",
+        "-test.run=^TestCrashMatrix$/CR09-revoked-ops-job",
+        "-test.v"
+      ],
+      "group": "baseline_red",
+      "exit_code": 1,
+      "working_directory": "D:\\ZypoOps-One",
+      "sha256": "53d12868e0c1bf58e627e0774d2d817fe8122b3962041705512a8d90d281d454",
+      "expected_exit_code": 1,
+      "named_outcome_counts": {
+        "fail_parent": 1,
+        "fail_sub": 2
+      }
+    },
+    {
+      "log": "source.log",
+      "command": [
+        "C:\\Users\\Jiten\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "scripts/verify-sprint2r-evidence.py",
+        "--fingerprint"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.407,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "ce8db23743dec9ce667be69de9c93f3c31af9b3a0971e7a220d8b73dba183a09",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "sqlite_agent_tests.log",
+      "command": [
+        "C:\\Users\\Jiten\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        ".work/pack/tests/sqlite_agent_tests.py"
+      ],
+      "group": "fixtures",
+      "exit_code": 0,
+      "elapsed_seconds": 0.156,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "2095f75ffa998db7567e1a02268f3a189116e5ad64e42d11228a5186490ab4d1",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "validate_pack.log",
+      "command": [
+        "C:\\Users\\Jiten\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        ".work/pack/tests/validate_pack.py"
+      ],
+      "group": "fixtures",
+      "exit_code": 0,
+      "elapsed_seconds": 2.171,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "30d9b67b3dc971b68202d8f75cc7d57d74489ce59eb394c7157cb839e9609fb6",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "vet-linux.log",
+      "command": [
+        "go.exe",
+        "vet",
+        "./..."
+      ],
+      "group": "build",
+      "exit_code": 0,
+      "elapsed_seconds": 1.109,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {
+        "GOOS": "linux",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "0"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "vet-windows.log",
+      "command": [
+        "go.exe",
+        "vet",
+        "./..."
+      ],
+      "group": "windows",
+      "exit_code": 0,
+      "elapsed_seconds": 0.735,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "windows-platform.log",
+      "command": [
+        "cmd.exe",
+        "/c",
+        "ver"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.047,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "180fbe4b6da131757f491a46dbb0b0a3e64a6800799dcce018dad0fe1e9f1cdb",
+      "expected_exit_code": 0
+    },
+    {
+      "log": "zig-version.log",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\zigtool\\ziglang\\zig.exe",
+        "version"
+      ],
+      "group": "static",
+      "exit_code": 0,
+      "elapsed_seconds": 0.062,
+      "working_directory": "D:\\ZypoOps-One",
+      "environment_overrides": {},
+      "sha256": "c6fb87657a4ee72e2b549cdd39c12854fdbecbdfef033c04f523d4bfcb02aa4c",
+      "expected_exit_code": 0
+    }
+  ]
+}

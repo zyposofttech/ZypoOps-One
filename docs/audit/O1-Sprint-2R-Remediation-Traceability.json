@@ -1,0 +1,231 @@
+{
+  "baseline_commit": "8f9d88be2013c9b014202fc2435ec1368d83575c",
+  "candidate_source_sha256": "3efaa1b6ae9045d0b10b978e1103af4bcd6182e8aedde4f258859b6b61c4f9c6",
+  "original_audit": {
+    "path": "docs/audit/O1-Sprint-2-Independent-Audit.md",
+    "sha256": "b0e5d99bc3c6d7d26b01065e2be2d192795ba4727bbb36be321352a986eb2df6",
+    "engineering_verdict": "GO_WITH_CONDITIONS_TEST_ONLY"
+  },
+  "independent_acceptance": null,
+  "technical_findings": [
+    {
+      "id": "AUD-S2-P1-01",
+      "finding": "Revoking the ops_job key wedges pending reconciliation",
+      "disposition": "REMEDIATED_AWAITING_INDEPENDENT_VERIFICATION",
+      "root_cause": "Both roles required live MC-03 trust before consulting their independent durable admission records. Killing the process after reservation or product commit and revoking the issuer made both restart witnesses fail with UNTRUSTED_KEY.",
+      "remediation": "Fresh deliveries require current proofs. The Agent resumes its own durable queue. The Helper binds observation or fencing to its own original reservation and consumed grants. A retired issuer cannot authorise a new effect. Missing evidence or an unavailable signer keeps work pending.",
+      "changed_paths": [
+        "services/site-agent/agent.go",
+        "services/site-agent/deployment.go",
+        "services/local-helper/deployment.go",
+        "tests/sprint2/crash_linux_test.go",
+        "tests/sprint2/workflow_linux_test.go"
+      ],
+      "test_functions": [
+        "TestCrashMatrix",
+        "TestCommittedDisconnect",
+        "TestSubstitutedHelperExecution"
+      ],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/red-linux.log",
+        "docs/audit/sprint-2r-evidence/linux-sprint2.log",
+        "docs/audit/sprint-2r-evidence/linux-race-sprint2.log"
+      ]
+    },
+    {
+      "id": "AUD-S2-P1-02",
+      "finding": "Runtime evidence unavailable to the original reviewer",
+      "disposition": "EVIDENCE_PROVIDED_AWAITING_INDEPENDENT_ACCEPTANCE",
+      "root_cause": "The audit sandbox lacked the toolchains and access to the hosted run. The implementation required reproducible evidence attributable to a particular candidate.",
+      "remediation": "Archived the successful hosted baseline. The local source register ties Windows, Linux, database and cross-runtime evidence to the working tree. The workflow now retains named Go outcomes and source identity for a future authorised run.",
+      "changed_paths": [
+        ".github/workflows/foundation.yml",
+        "scripts/verify-sprint2r-evidence.py"
+      ],
+      "test_functions": [
+        "TestCrashMatrix",
+        "TestKernelSocketPeer"
+      ],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/hosted-baseline.log",
+        "docs/audit/sprint-2r-evidence/source.log",
+        "docs/audit/sprint-2r-evidence/go-windows.log",
+        "docs/audit/sprint-2r-evidence/race-windows.log",
+        "docs/audit/sprint-2r-evidence/linux-sprint2.log",
+        "docs/audit/sprint-2r-evidence/linux-race-sprint2.log",
+        "docs/audit/sprint-2r-evidence/node-test.log",
+        "docs/audit/sprint-2r-evidence/node-test-interop.log",
+        "docs/audit/sprint-2r-evidence/postgres.log"
+      ]
+    },
+    {
+      "id": "AUD-S2-P2-01",
+      "finding": "Serial Helper handlers conceal contention and block unrelated callers",
+      "disposition": "REMEDIATED_AWAITING_INDEPENDENT_VERIFICATION",
+      "root_cause": "The accept loop completed an entire connection before accepting another. Queued kernel connections could pass a nominal concurrency test without ever overlapping handlers.",
+      "remediation": "An explicit worker bound rejects excess connections before starting a worker. Per-job serialisation, durable site holds, deadlines and cancellation protect concurrent workers. Shutdown drains workers. Independent product barriers prove concurrent entry.",
+      "changed_paths": [
+        "services/local-helper/socket_linux.go",
+        "services/local-helper/helper.go",
+        "services/local-helper/deployment.go",
+        "tests/sprint2/remediation_linux_test.go"
+      ],
+      "test_functions": [
+        "TestOverlappingAdmissions",
+        "TestBoundedStalledConnections",
+        "TestConcurrentDuplicates",
+        "TestCompetingOperations"
+      ],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/linux-sprint2.log",
+        "docs/audit/sprint-2r-evidence/linux-race-sprint2.log"
+      ]
+    },
+    {
+      "id": "AUD-S2-P2-02",
+      "finding": "Live preflight holds a SQLite writer",
+      "disposition": "REMEDIATED_AWAITING_INDEPENDENT_VERIFICATION",
+      "root_cause": "Agent and Helper mixed external preflight with durable grant and execution writes. A slow product held the single SQLite writer. Moving the call also exposed an initial clock sample that cancellation could discard.",
+      "remediation": "Each role persists the initial time sample, releases the writer for external preflight and rechecks authority at reservation. Grant consumption and execution admission commit together. The product checks final lock, readiness and expiry at the effect boundary.",
+      "changed_paths": [
+        "packages/local-policy/policy.go",
+        "services/site-agent/agent.go",
+        "services/site-agent/deployment.go",
+        "services/local-helper/helper.go",
+        "services/local-helper/deployment.go",
+        "tests/sprint2/remediation_linux_test.go",
+        "tests/sprint2/failures_linux_test.go"
+      ],
+      "test_functions": [
+        "TestPreflightTransactions",
+        "TestOverlappingAdmissions",
+        "TestEffectBoundaries",
+        "TestRejectedJobPreservesClockWatermark"
+      ],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/linux-sprint2.log",
+        "docs/audit/sprint-2r-evidence/linux-site-agent.log",
+        "docs/audit/sprint-2r-evidence/linux-race-sprint2.log"
+      ]
+    },
+    {
+      "id": "AUD-S2-P2-03",
+      "finding": "MC-14 backup checks depend on the preflight mode",
+      "disposition": "REMEDIATED_AWAITING_INDEPENDENT_VERIFICATION",
+      "root_cause": "A LocalCheck condition omitted the independently provisioned backup requirement in callback mode. Its old synthetic fixtures also lacked an operation-specific expected manifest.",
+      "remediation": "Backup-required jobs use the same signed MC-14 validation before either preflight implementation. Legacy fixtures independently pin their test jobs. Both product integrations exercise the stricter checks.",
+      "changed_paths": [
+        "packages/local-policy/policy.go",
+        "packages/local-policy/backup_test.go",
+        "tests/fixtures/site.go",
+        "tests/sprint2/failures_linux_test.go"
+      ],
+      "test_functions": [
+        "TestBackupAdmissionModes",
+        "TestAdmissionFailures",
+        "TestEffectBoundaries"
+      ],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/linux-local-policy.log",
+        "docs/audit/sprint-2r-evidence/linux-sprint2.log",
+        "docs/audit/sprint-2r-evidence/linux-race-local-policy.log"
+      ]
+    },
+    {
+      "id": "AUD-S2-P3-01",
+      "finding": "Status and controlled-document versions disagree",
+      "disposition": "REMEDIATED_AWAITING_INDEPENDENT_VERIFICATION",
+      "root_cause": "Time-specific Sprint 2 status had been read as current status. The Operations Platform Master BRD v1.2 retains stale v1.1 footer text.",
+      "remediation": "Updated the current README and appended dated corrections to the historical implementation report and checkpoint. A controlled erratum identifies the BRD by its title, revision and recorded checksum.",
+      "changed_paths": [
+        "README.md",
+        "docs/implementation/O1-Sprint-2.md",
+        "docs/implementation/O1-Sprint-2-Checkpoint.md"
+      ],
+      "test_functions": [],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/hosted-baseline.log",
+        "docs/audit/sprint-2r-evidence/git-diff-check.log"
+      ]
+    },
+    {
+      "id": "AUD-S2-P3-02",
+      "finding": "The stage projection misrepresents UNKNOWN as FAILED",
+      "disposition": "REMEDIATED_AWAITING_INDEPENDENT_VERIFICATION",
+      "root_cause": "A terminal-stage mapping collapsed an unresolved post-verification outcome into the ordinary failure state.",
+      "remediation": "Persist UNKNOWN directly. Opening a connected ledger repairs the legacy POST_VERIFY projection only where both the immutable receipt outcome and the job state corroborate UNKNOWN. Compare the signed bytes across reopen and central acceptance.",
+      "changed_paths": [
+        "services/site-agent/deployment.go",
+        "tests/sprint2/remediation_linux_test.go"
+      ],
+      "test_functions": [
+        "TestUnknownStageMigration",
+        "TestEffectBoundaries"
+      ],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/linux-sprint2.log",
+        "docs/audit/sprint-2r-evidence/linux-race-sprint2.log"
+      ]
+    },
+    {
+      "id": "AUD-S2-P3-03",
+      "finding": "Central receipt verification relies on single-site fixture constants",
+      "disposition": "REMEDIATED_AWAITING_INDEPENDENT_VERIFICATION",
+      "root_cause": "The simulator selected an installation, Agent and signer from constants. A global sequence uniqueness rule also conflated independent installations.",
+      "remediation": "Trusted setup provisions durable site enrolments. Submission, scoped delivery and receipt acceptance bind each job to its enrolled installation, Agent and signing key. A local enqueue ordinal supports equal signed sequences at separate installations.",
+      "changed_paths": [
+        "tests/sprint2/central.go",
+        "tests/sprint2/central_test.go",
+        "tests/sprint2/workflow_linux_test.go"
+      ],
+      "test_functions": [
+        "TestMultiSiteEnrolment",
+        "TestCentralReceiptBinding",
+        "TestLocalAuthority"
+      ],
+      "evidence": [
+        "docs/audit/sprint-2r-evidence/go-windows.log",
+        "docs/audit/sprint-2r-evidence/linux-sprint2.log",
+        "docs/audit/sprint-2r-evidence/linux-race-sprint2.log"
+      ]
+    }
+  ],
+  "governance_findings": [
+    {
+      "id": "AUD-S2-GOV-01",
+      "title": "OD01–OD08 Human Sign-Off",
+      "disposition": "GOVERNANCE_BLOCKED",
+      "source": "Independent audit section 15"
+    },
+    {
+      "id": "AUD-S2-GOV-02",
+      "title": "Joint LOCAL-01 Approval",
+      "disposition": "GOVERNANCE_BLOCKED",
+      "source": "Independent audit section 15"
+    },
+    {
+      "id": "AUD-S2-GOV-03",
+      "title": "OS Service-Account Isolation",
+      "disposition": "GOVERNANCE_BLOCKED",
+      "source": "Independent audit section 15"
+    },
+    {
+      "id": "AUD-S2-GOV-04",
+      "title": "Production Trust & Custody",
+      "disposition": "GOVERNANCE_BLOCKED",
+      "source": "Independent audit section 15"
+    },
+    {
+      "id": "AUD-S2-GOV-05",
+      "title": "Operator IAM & Central API Ingress",
+      "disposition": "GOVERNANCE_BLOCKED",
+      "source": "Independent audit section 15"
+    },
+    {
+      "id": "AUD-S2-GOV-06",
+      "title": "Physical Power-Loss, Real OCI Execution, Hold Release & Clinical Commissioning",
+      "disposition": "GOVERNANCE_BLOCKED",
+      "source": "Independent audit section 15"
+    }
+  ]
+}
