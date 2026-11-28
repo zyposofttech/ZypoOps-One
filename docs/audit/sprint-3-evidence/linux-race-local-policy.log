@@ -1,0 +1,55 @@
+=== RUN   TestBackupAdmissionModes
+=== RUN   TestBackupAdmissionModes/legacy/valid
+=== RUN   TestBackupAdmissionModes/legacy/missing_policy
+=== RUN   TestBackupAdmissionModes/legacy/other_job
+=== RUN   TestBackupAdmissionModes/legacy/wrong_signer
+=== RUN   TestBackupAdmissionModes/legacy/wrong_artifact
+=== RUN   TestBackupAdmissionModes/legacy/wrong_product
+=== RUN   TestBackupAdmissionModes/legacy/wrong_manifest
+=== RUN   TestBackupAdmissionModes/legacy/wrong_categories
+=== RUN   TestBackupAdmissionModes/legacy/signed_age_mismatch
+=== RUN   TestBackupAdmissionModes/legacy/stale
+=== RUN   TestBackupAdmissionModes/legacy/unencrypted
+=== RUN   TestBackupAdmissionModes/legacy/failed_integrity
+=== RUN   TestBackupAdmissionModes/legacy/error_state
+=== RUN   TestBackupAdmissionModes/connected/valid
+=== RUN   TestBackupAdmissionModes/connected/missing_policy
+=== RUN   TestBackupAdmissionModes/connected/other_job
+=== RUN   TestBackupAdmissionModes/connected/wrong_signer
+=== RUN   TestBackupAdmissionModes/connected/wrong_artifact
+=== RUN   TestBackupAdmissionModes/connected/wrong_product
+=== RUN   TestBackupAdmissionModes/connected/wrong_manifest
+=== RUN   TestBackupAdmissionModes/connected/wrong_categories
+=== RUN   TestBackupAdmissionModes/connected/signed_age_mismatch
+=== RUN   TestBackupAdmissionModes/connected/stale
+=== RUN   TestBackupAdmissionModes/connected/unencrypted
+=== RUN   TestBackupAdmissionModes/connected/failed_integrity
+=== RUN   TestBackupAdmissionModes/connected/error_state
+--- PASS: TestBackupAdmissionModes (2.00s)
+    --- PASS: TestBackupAdmissionModes/legacy/valid (0.19s)
+    --- PASS: TestBackupAdmissionModes/legacy/missing_policy (0.06s)
+    --- PASS: TestBackupAdmissionModes/legacy/other_job (0.11s)
+    --- PASS: TestBackupAdmissionModes/legacy/wrong_signer (0.07s)
+    --- PASS: TestBackupAdmissionModes/legacy/wrong_artifact (0.07s)
+    --- PASS: TestBackupAdmissionModes/legacy/wrong_product (0.07s)
+    --- PASS: TestBackupAdmissionModes/legacy/wrong_manifest (0.08s)
+    --- PASS: TestBackupAdmissionModes/legacy/wrong_categories (0.07s)
+    --- PASS: TestBackupAdmissionModes/legacy/signed_age_mismatch (0.06s)
+    --- PASS: TestBackupAdmissionModes/legacy/stale (0.06s)
+    --- PASS: TestBackupAdmissionModes/legacy/unencrypted (0.06s)
+    --- PASS: TestBackupAdmissionModes/legacy/failed_integrity (0.06s)
+    --- PASS: TestBackupAdmissionModes/legacy/error_state (0.06s)
+    --- PASS: TestBackupAdmissionModes/connected/valid (0.06s)
+    --- PASS: TestBackupAdmissionModes/connected/missing_policy (0.06s)
+    --- PASS: TestBackupAdmissionModes/connected/other_job (0.12s)
+    --- PASS: TestBackupAdmissionModes/connected/wrong_signer (0.07s)
+    --- PASS: TestBackupAdmissionModes/connected/wrong_artifact (0.06s)
+    --- PASS: TestBackupAdmissionModes/connected/wrong_product (0.06s)
+    --- PASS: TestBackupAdmissionModes/connected/wrong_manifest (0.07s)
+    --- PASS: TestBackupAdmissionModes/connected/wrong_categories (0.08s)
+    --- PASS: TestBackupAdmissionModes/connected/signed_age_mismatch (0.07s)
+    --- PASS: TestBackupAdmissionModes/connected/stale (0.06s)
+    --- PASS: TestBackupAdmissionModes/connected/unencrypted (0.07s)
+    --- PASS: TestBackupAdmissionModes/connected/failed_integrity (0.08s)
+    --- PASS: TestBackupAdmissionModes/connected/error_state (0.09s)
+PASS

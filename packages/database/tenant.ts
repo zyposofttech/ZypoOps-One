@@ -5,6 +5,7 @@ const uuid=/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 export class TenantDatabase {
   #client:PrismaClient;
   constructor(client=new PrismaClient()){this.#client=client}
+  onModuleDestroy(){return this.close()}
   close(){return this.#client.$disconnect()}
   run<T>(scope:SiteContext,operation:(tx:Prisma.TransactionClient)=>Promise<T>):Promise<T>{
     if (!scope || !uuid.test(scope.tenantId) || !uuid.test(scope.siteId)) throw Error('INVALID_SITE_CONTEXT');

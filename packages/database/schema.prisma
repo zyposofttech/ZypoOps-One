@@ -26,21 +26,24 @@ model action_lock {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model approval_grant {
-  id                                 String              @id @db.Uuid
-  tenant_id                          String              @db.Uuid
-  site_id                            String              @db.Uuid
-  target_sha256                      String              @db.Char(64)
-  operation                          String              @db.VarChar(60)
-  site_authoriser_key_id             String              @db.VarChar(120)
-  site_authoriser_attestation_sha256 String              @db.Char(64)
-  ops_grant_sha256                   String              @db.Char(64)
-  maker_id                           String              @db.VarChar(160)
-  checker_id                         String              @db.VarChar(160)
-  valid_from                         DateTime            @db.Timestamptz(6)
-  valid_until                        DateTime            @db.Timestamptz(6)
-  consumed_at                        DateTime?           @db.Timestamptz(6)
-  site                               site                @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  id                                 String                        @id @db.Uuid
+  tenant_id                          String                        @db.Uuid
+  site_id                            String                        @db.Uuid
+  target_sha256                      String                        @db.Char(64)
+  operation                          String                        @db.VarChar(60)
+  site_authoriser_key_id             String                        @db.VarChar(120)
+  site_authoriser_attestation_sha256 String                        @db.Char(64)
+  ops_grant_sha256                   String                        @db.Char(64)
+  maker_id                           String                        @db.VarChar(160)
+  checker_id                         String                        @db.VarChar(160)
+  valid_from                         DateTime                      @db.Timestamptz(6)
+  valid_until                        DateTime                      @db.Timestamptz(6)
+  consumed_at                        DateTime?                     @db.Timestamptz(6)
+  signed_wire                        String?
+  revoked_at                         DateTime?                     @db.Timestamptz(6)
+  site                               site                          @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
   job_approval_grant                 job_approval_grant?
+  site_configuration_revision        site_configuration_revision[]
   support_session                    support_session[]
 
   @@unique([tenant_id, site_id, id])
@@ -63,13 +66,19 @@ model audit_anchor {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model backup_status {
-  id                     String    @id @db.Uuid
-  tenant_id              String    @db.Uuid
-  site_id                String    @db.Uuid
-  backup_manifest_sha256 String    @db.Char(64)
-  status                 String    @db.VarChar(32)
-  last_verified_at       DateTime? @db.Timestamptz(6)
-  site                   site      @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  id                     String           @id @db.Uuid
+  tenant_id              String           @db.Uuid
+  site_id                String           @db.Uuid
+  backup_manifest_sha256 String           @db.Char(64)
+  status                 String           @db.VarChar(32)
+  last_verified_at       DateTime?        @db.Timestamptz(6)
+  agent_id               String?          @db.Uuid
+  operation_id           String?          @db.Uuid
+  target_sha256          String?          @db.Char(64)
+  signed_wire            String?
+  site_agent             site_agent?      @relation(fields: [tenant_id, site_id, agent_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  site                   site             @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  deployment_plan        deployment_plan? @relation(fields: [tenant_id, site_id, operation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([tenant_id, site_id, id])
 }
@@ -104,13 +113,21 @@ model customer_legal_entity {
 }
 
 model deployment_artifact {
+  edition String? @db.VarChar(160)
+  service_dependencies String?
   id                     String            @id @db.Uuid
   product_key            String            @db.VarChar(80)
   artifact_sha256        String            @unique @db.Char(64)
   signed_manifest_sha256 String            @db.Char(64)
   state                  String            @db.VarChar(40)
   created_at             DateTime          @db.Timestamptz(6)
+  signed_wire            String?
+  release_id             String?           @db.VarChar(160)
+  channel                String?           @db.VarChar(160)
+  deployment_plan        deployment_plan[]
   rollout_attempt        rollout_attempt[]
+
+  @@unique([product_key, release_id, channel])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -125,6 +142,7 @@ model enrolment_claim {
   expires_at          DateTime     @db.Timestamptz(6)
   consumed_at         DateTime?    @db.Timestamptz(6)
   consumed_csr_sha256 String?      @db.Char(64)
+  installer_id        String?      @db.Uuid
   installation        installation @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([tenant_id, site_id, id])
@@ -140,6 +158,7 @@ model entitlement {
   policy_epoch       BigInt
   entitlement_sha256 String   @db.Char(64)
   expires_at         DateTime @db.Timestamptz(6)
+  signed_wire        String?
   site               site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([tenant_id, site_id, id])
@@ -148,13 +167,16 @@ model entitlement {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model health_sample {
-  id             String   @id @db.Uuid
-  tenant_id      String   @db.Uuid
-  site_id        String   @db.Uuid
-  component_code String   @db.VarChar(50)
-  numeric_value  Decimal? @db.Decimal
-  captured_at    DateTime @db.Timestamptz(6)
-  site           site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  id             String      @id @db.Uuid
+  tenant_id      String      @db.Uuid
+  site_id        String      @db.Uuid
+  component_code String      @db.VarChar(50)
+  numeric_value  Decimal?    @db.Decimal
+  captured_at    DateTime    @db.Timestamptz(6)
+  agent_id       String?     @db.Uuid
+  signed_wire    String?
+  site_agent     site_agent? @relation(fields: [tenant_id, site_id, agent_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  site           site        @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([tenant_id, site_id, id])
 }
@@ -168,9 +190,15 @@ model installation {
   installation_epoch   Int                    @default(1)
   status               String                 @db.VarChar(40)
   host_binding_sha256  String                 @db.Char(64)
+  product_key          String?                @db.VarChar(160)
+  replaces_id          String?                @db.Uuid
   certificate_identity certificate_identity[]
+  deployment_plan      deployment_plan[]
   enrolment_claim      enrolment_claim[]
   site                 site                   @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  installation         installation?          @relation("installationToinstallation", fields: [tenant_id, site_id, replaces_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  other_installation   installation[]         @relation("installationToinstallation")
+  management_job       management_job[]
   site_agent           site_agent[]
 
   @@unique([tenant_id, site_id, id])
@@ -218,6 +246,7 @@ model job_progress_event {
   progress_state  String         @db.VarChar(24)
   event_at        DateTime       @db.Timestamptz(6)
   sequence_number BigInt
+  signed_wire     String?
   management_job  management_job @relation(fields: [tenant_id, site_id, job_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([job_id, sequence_number])
@@ -234,6 +263,7 @@ model job_receipt {
   terminal_state  String         @db.VarChar(24)
   evidence_sha256 String         @db.Char(64)
   completed_at    DateTime       @db.Timestamptz(6)
+  signed_wire     String?
   management_job  management_job @relation(fields: [tenant_id, site_id, job_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([tenant_id, site_id, job_id])
@@ -256,13 +286,19 @@ model management_job {
   created_at         DateTime             @db.Timestamptz(6)
   expires_at         DateTime             @db.Timestamptz(6)
   target_sha256      String?              @db.Char(64)
+  bundle_wire        String?
+  execution_id       String?              @db.Uuid
+  installation_id    String?              @db.Uuid
+  request_sha256     String?              @db.Char(64)
   action_lock        action_lock[]
   job_approval_grant job_approval_grant[]
   job_attempt        job_attempt[]
   job_progress_event job_progress_event[]
   job_receipt        job_receipt?
   site_agent         site_agent           @relation(fields: [tenant_id, site_id, agent_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  installation       installation?        @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([tenant_id, site_id, installation_id, job_sequence], map: "installation_sequence")
   @@unique([tenant_id, site_id, agent_id, job_sequence])
   @@unique([tenant_id, site_id, command_type, idempotency_key])
   @@unique([tenant_id, site_id, id])
@@ -281,6 +317,10 @@ model operational_audit_event {
   event_sha256          String   @db.Char(64)
   previous_chain_sha256 String   @db.Char(64)
   created_at            DateTime @db.Timestamptz(6)
+  resource_id           String?  @db.Uuid
+  correlation_id        String?  @db.Uuid
+  outcome               String?  @db.VarChar(160)
+  reason_code           String?  @db.VarChar(160)
   site                  site     @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([tenant_id, site_id, event_seq])
@@ -376,6 +416,11 @@ model site {
   tenant_id                   String                        @db.Uuid
   site_code                   String                        @db.VarChar(64)
   status                      String                        @db.VarChar(40)
+  timezone                    String?                       @db.VarChar(160)
+  deployment_profile          String?                       @db.VarChar(160)
+  data_location               String?                       @db.VarChar(160)
+  connectivity                String?                       @db.VarChar(160)
+  maintenance                 String?                       @db.VarChar(160)
   action_lock                 action_lock[]
   approval_grant              approval_grant[]
   audit_anchor                audit_anchor[]
@@ -401,15 +446,21 @@ model site {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model site_agent {
-  id              String           @id @db.Uuid
-  tenant_id       String           @db.Uuid
-  site_id         String           @db.Uuid
-  installation_id String           @db.Uuid
-  agent_version   String           @db.VarChar(64)
-  status          String           @db.VarChar(40)
-  management_job  management_job[]
-  installation    installation     @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  id               String             @id @db.Uuid
+  tenant_id        String             @db.Uuid
+  site_id          String             @db.Uuid
+  installation_id  String             @db.Uuid
+  agent_version    String             @db.VarChar(64)
+  status           String             @db.VarChar(40)
+  receipt_kid      String?            @db.VarChar(160)
+  identity_wire    String?
+  backup_status    backup_status[]
+  health_sample    health_sample[]
+  management_job   management_job[]
+  installation     installation       @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  site_signing_key site_signing_key[]
 
+  @@unique([tenant_id, site_id, receipt_kid])
   @@unique([tenant_id, site_id, id])
 }
 
@@ -433,12 +484,15 @@ model site_authoriser_key {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model site_configuration_revision {
-  id            String @id @db.Uuid
-  tenant_id     String @db.Uuid
-  site_id       String @db.Uuid
-  config_sha256 String @db.Char(64)
-  revision_no   BigInt
-  site          site   @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  id             String          @id @db.Uuid
+  tenant_id      String          @db.Uuid
+  site_id        String          @db.Uuid
+  config_sha256  String          @db.Char(64)
+  revision_no    BigInt
+  settings_wire  String?
+  approval_id    String?         @db.Uuid
+  approval_grant approval_grant? @relation(fields: [tenant_id, site_id, approval_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  site           site            @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([tenant_id, site_id, id])
   @@unique([tenant_id, site_id, revision_no])
@@ -461,17 +515,19 @@ model site_ownership_event {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model site_signing_key {
-  tenant_id      String    @db.Uuid
-  site_id        String    @db.Uuid
-  kid            String    @db.VarChar(80)
-  purpose        String    @db.VarChar(80)
-  algorithm      String    @db.VarChar(16)
+  tenant_id      String      @db.Uuid
+  site_id        String      @db.Uuid
+  kid            String      @db.VarChar(80)
+  purpose        String      @db.VarChar(80)
+  algorithm      String      @db.VarChar(16)
   public_key_pem String
   root_revision  BigInt
-  valid_from     DateTime  @db.Timestamptz(6)
-  valid_until    DateTime  @db.Timestamptz(6)
-  revoked_at     DateTime? @db.Timestamptz(6)
-  site           site      @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
+  valid_from     DateTime    @db.Timestamptz(6)
+  valid_until    DateTime    @db.Timestamptz(6)
+  revoked_at     DateTime?   @db.Timestamptz(6)
+  agent_id       String?     @db.Uuid
+  site_agent     site_agent? @relation(fields: [tenant_id, site_id, agent_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+  site           site        @relation(fields: [tenant_id, site_id], references: [tenant_id, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([tenant_id, site_id, kid])
 }
@@ -508,6 +564,11 @@ model tenant {
   id                    String                  @id @db.Uuid
   legal_name            String                  @db.VarChar(240)
   status                String                  @db.VarChar(40)
+  contract_ref          String?                 @db.VarChar(160)
+  support_tier          String?                 @db.VarChar(160)
+  contact_ref           String?                 @db.VarChar(160)
+  approver_ref          String?                 @db.VarChar(160)
+  deployment_constraint String?                 @db.VarChar(160)
   customer_legal_entity customer_legal_entity[]
   operator_role         operator_role[]
   site                  site[]
@@ -523,4 +584,22 @@ model trusted_signing_key {
   valid_from     DateTime  @db.Timestamptz(6)
   valid_until    DateTime  @db.Timestamptz(6)
   revoked_at     DateTime? @db.Timestamptz(6)
+}
+
+model deployment_plan {
+  id                  String              @id @db.Uuid
+  tenant_id           String              @db.Uuid
+  site_id             String              @db.Uuid
+  installation_id     String              @db.Uuid
+  artifact_sha256     String              @db.Char(64)
+  backup_digest       String              @db.Char(64)
+  categories          String[]            @db.VarChar(40)
+  assessment          String
+  ready               Boolean
+  backup_status       backup_status[]
+  deployment_artifact deployment_artifact @relation(fields: [artifact_sha256], references: [artifact_sha256], onDelete: NoAction, onUpdate: NoAction)
+  installation        installation        @relation(fields: [tenant_id, site_id, installation_id], references: [tenant_id, site_id, id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tenant_id, site_id, id])
+  @@unique([tenant_id, site_id, backup_digest])
 }

@@ -9,7 +9,7 @@ const bin=name=>path.join(process.env.PGBIN||'',name);
 assert.match(execFileSync(bin('postgres'),['--version'],{encoding:'utf8'}),/PostgreSQL\) 16\./);
 mkdirSync('.work',{recursive:true});
 const dir=path.resolve(mkdtempSync('.work/pg16-')),data=path.join(dir,'data');
-const passwords=Array.from({length:3},()=>randomBytes(32).toString('hex'));
+const passwords=Array.from({length:4},()=>randomBytes(32).toString('hex'));
 const bind=createServer();await new Promise(resolve=>bind.listen(0,'127.0.0.1',resolve));
 const port=bind.address().port;await new Promise(resolve=>bind.close(resolve));
 const pgpass=path.join(dir,'init-password');
@@ -22,12 +22,19 @@ try{
  execFileSync(bin('initdb'),['-D',data,'-U','test_admin','--auth=scram-sha-256','--encoding=UTF8','--locale=C','--pwfile='+pgpass],{stdio:'inherit'});
  rmSync(pgpass);
  execFileSync(bin('pg_ctl'),['-D',data,'-l',path.join(dir,'server.log'),'-o','-h 127.0.0.1 -p '+port+(process.platform==='win32'?'':" -k ''"),'-w','start'],{stdio:'inherit'});started=true;
- sql('test_admin',passwords[0],"CREATE ROLE zop_migrate LOGIN NOSUPERUSER NOCREATEROLE NOBYPASSRLS PASSWORD '"+passwords[1]+"'; CREATE ROLE zop_runtime LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS PASSWORD '"+passwords[2]+"'; GRANT CREATE ON DATABASE postgres TO zop_migrate; CREATE SCHEMA zop AUTHORIZATION zop_migrate;");
+ sql('test_admin',passwords[0],"CREATE ROLE zop_migrate LOGIN NOSUPERUSER NOCREATEROLE NOBYPASSRLS PASSWORD '"+passwords[1]+"'; CREATE ROLE zop_runtime LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS PASSWORD '"+passwords[2]+"'; CREATE ROLE zop_synthetic_provision LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS PASSWORD '"+passwords[3]+"'; GRANT CREATE ON DATABASE postgres TO zop_migrate; CREATE SCHEMA zop AUTHORIZATION zop_migrate;");
  const env={...process.env,DATABASE_URL:dbUrl('zop_migrate',passwords[1])};
  prisma(['migrate','deploy'],env);prisma(['migrate','deploy'],env);
  if(process.argv.includes('--introspect')) prisma(['db','pull'],env);
  prisma(['generate'],env);
  execFileSync(process.execPath,['--test','tests/tenancy/isolation.test.ts'],{env:{...env,TEST_ADMIN_URL:dbUrl('test_admin',passwords[0]),DATABASE_URL:dbUrl('zop_runtime',passwords[2])},stdio:'inherit'});
+ const tools=path.join(dir,'test-tools');mkdirSync(tools);
+ const csrVerifier=path.join(tools,process.platform==='win32'?'csr.exe':'csr');
+ const worker=path.join(tools,'worker');
+ execFileSync('go',['build','-o',csrVerifier,'./cmd/synthetic-csr'],{stdio:'inherit'});
+ execFileSync('go',['build','-o',worker,'./tests/central/worker'],{env:{...process.env,GOOS:'linux',GOARCH:process.arch==='arm64'?'arm64':'amd64',CGO_ENABLED:'0'},stdio:'inherit'});
+ execFileSync(process.execPath,['--test','tests/central/*.test.ts'],{env:{...process.env,NODE_ENV:'test',SYNTHETIC_CSR:csrVerifier,SYNTHETIC_WORKER:worker,DATABASE_URL:dbUrl('zop_runtime',passwords[2]),PROVISION_URL:dbUrl('zop_synthetic_provision',passwords[3])},stdio:'inherit'});
+
 } finally {
  if(started)execFileSync(bin('pg_ctl'),['-D',data,'-m','fast','-w','stop'],{stdio:'inherit'});
  rmSync(dir,{recursive:true,force:true});

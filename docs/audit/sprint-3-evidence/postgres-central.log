@@ -1,0 +1,97 @@
+The files belonging to this database system will be owned by user "Jiten".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+creating directory D:/ZypoOps-One/.work/pg16-ENDsXq/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... windows
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Asia/Calcutta
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    ^"C^:^\Program^ Files^\PostgreSQL^\16^\bin^\pg^_ctl^" -D ^"D^:^\ZypoOps^-One^\^.work^\pg16^-ENDsXq^\data^" -l logfile start
+
+waiting for server to start.... done
+server started
+Prisma schema loaded from packages\database\schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "zop" at "127.0.0.1:58541"
+
+3 migrations found in prisma/migrations
+
+Applying migration `001_o0`
+Applying migration `002_runtime`
+Applying migration `003_central`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 001_o0/
+    └─ migration.sql
+  └─ 002_runtime/
+    └─ migration.sql
+  └─ 003_central/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+Prisma schema loaded from packages\database\schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "zop" at "127.0.0.1:58541"
+
+3 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+Prisma schema loaded from packages\database\schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to .\node_modules\.pnpm\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\node_modules\@prisma\client in 168ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+✔ migration identity differs from nonowner runtime with FORCE RLS (87.7624ms)
+✔ raw SQL without context fails closed on reads and writes (4.7273ms)
+✔ same-tenant other site and cross-tenant reads and writes (12.2398ms)
+✔ 120 concurrent Nest/Prisma transactions across a four-connection pool (143.0095ms)
+✔ foreign keys, idempotency, maker/checker, transitions and atomic single-use consumption (52.7606ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 897.0309
+✔ two customers, three sites and four installations retain scope through pooled operations (253.5785ms)
+▶ durable scoped management through the enrolled Go Agent and both product profiles
+  ✔ invalid HMAC, CSR, digest, installation, installer and nonce leave the claim unused (615.2974ms)
+  ✔ expired bootstrap proof fails without consumption (1115.5756ms)
+  ✔ configuration staging binds a dual-signed technical grant and preserves the application gate (60.903ms)
+  ✔ installation 1 zyposono-sim reconciles the original receipt after central restart and acknowledgement loss (2822.584ms)
+  ✔ expired undelivered command retains its consumed grant (1799.831ms)
+  ✔ expired entitlement reports management expiry and preserves the original execution evidence (23.3973ms)
+  ✔ unresolved site work blocks a separately authorised competing product before grant consumption (36.4612ms)
+  ✔ installation 2 mock-secondary reconciles the original receipt after central restart and acknowledgement loss (776.4696ms)
+  ✔ installation 3 zyposono-sim reconciles the original receipt after central restart and acknowledgement loss (977.2465ms)
+  ✔ expired delivered command retains the site hold and has no inferred terminal receipt (1752.1456ms)
+  ✔ installation 4 mock-secondary reconciles the original receipt after central restart and acknowledgement loss (962.9598ms)
+✔ durable scoped management through the enrolled Go Agent and both product profiles (12820.7824ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13891.1447
+waiting for server to shut down.... done
+server stopped

@@ -1,0 +1,39 @@
+=== RUN   TestContainment
+=== RUN   TestContainment/wrong_site
+=== RUN   TestContainment/wrong_purpose
+=== RUN   TestContainment/missing_consent
+=== RUN   TestContainment/missing_backup
+=== RUN   TestContainment/unapproved_operation
+=== RUN   TestContainment/unsigned_job
+=== RUN   TestContainment/unsigned_manifest
+=== RUN   TestContainment/target_mismatch
+=== RUN   TestContainment/tampered_signed_job
+=== RUN   TestContainment/signed_job_with_wrong_purpose
+=== RUN   TestContainment/tampered_manifest
+--- PASS: TestContainment (0.43s)
+    --- PASS: TestContainment/wrong_site (0.02s)
+    --- PASS: TestContainment/wrong_purpose (0.01s)
+    --- PASS: TestContainment/missing_consent (0.01s)
+    --- PASS: TestContainment/missing_backup (0.01s)
+    --- PASS: TestContainment/unapproved_operation (0.01s)
+    --- PASS: TestContainment/unsigned_job (0.01s)
+    --- PASS: TestContainment/unsigned_manifest (0.01s)
+    --- PASS: TestContainment/target_mismatch (0.01s)
+    --- PASS: TestContainment/tampered_signed_job (0.01s)
+    --- PASS: TestContainment/signed_job_with_wrong_purpose (0.01s)
+    --- PASS: TestContainment/tampered_manifest (0.01s)
+=== RUN   TestUnapprovedArtifactAndLock
+=== RUN   TestUnapprovedArtifactAndLock/artifact
+=== RUN   TestUnapprovedArtifactAndLock/clinical_lock
+--- PASS: TestUnapprovedArtifactAndLock (0.16s)
+    --- PASS: TestUnapprovedArtifactAndLock/artifact (0.09s)
+    --- PASS: TestUnapprovedArtifactAndLock/clinical_lock (0.07s)
+=== RUN   TestKernelSocketPeer
+=== RUN   TestKernelSocketPeer/allowed
+=== RUN   TestKernelSocketPeer/wrong_UID
+=== RUN   TestKernelSocketPeer/wrong_GID
+--- PASS: TestKernelSocketPeer (0.27s)
+    --- PASS: TestKernelSocketPeer/allowed (0.11s)
+    --- PASS: TestKernelSocketPeer/wrong_UID (0.08s)
+    --- PASS: TestKernelSocketPeer/wrong_GID (0.08s)
+PASS

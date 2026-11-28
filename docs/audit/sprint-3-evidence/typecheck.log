@@ -1,0 +1,4 @@
+
+> zyposoft-operations-platform@ typecheck D:\ZypoOps-One
+> tsc --noEmit
+

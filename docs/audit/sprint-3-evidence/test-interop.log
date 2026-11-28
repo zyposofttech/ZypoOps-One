@@ -1,0 +1,14 @@
+
+> zyposoft-operations-platform@ test:interop D:\ZypoOps-One
+> node --test tests/cryptography/*.test.ts
+
+✔ TS to Go to TS ES256 (200.9613ms)
+✔ TS to Go to TS Ed25519 (227.126ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 747.8835

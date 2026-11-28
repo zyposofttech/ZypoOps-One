@@ -6,7 +6,7 @@ ZypoOps One is being developed to manage the lifecycle of Zyposoft applications 
 
 The platform separates **central operations management** from **customer-local application data and clinical control**. It is designed to support ZypoSono One initially and additional Zyposoft products through the same management protocols, without embedding product-specific clinical logic in the Site Agent.
 
-> **Project status:** Active development. O1 Sprints 1 and 2 are committed for synthetic engineering verification. Independent Sprint 2R remediation awaits focused re-audit. The hosted [O1 foundation CI workflow](https://github.com/zyposofttech/ZypoOps-One/actions/workflows/foundation.yml) has passed. The platform is **not approved for customer deployment, production-trust integration or clinical use**.
+> **Project status:** Active development. O1 Sprints 1 and 2 are committed for synthetic engineering verification. Sprint 2R received independent acceptance for synthetic engineering on 26 November 2026. The hosted [O1 foundation CI workflow](https://github.com/zyposofttech/ZypoOps-One/actions/workflows/foundation.yml) has passed. The platform is **not approved for customer deployment, production-trust integration or clinical use**.
 
 ## What ZypoOps One is designed to do
 
@@ -64,6 +64,7 @@ Sprint 2 connects the agent and unprivileged helper over a Unix socket and recon
 | O1 Sprint 1C — Go Site Agent | Complete (test-only) | Durable jobs, signed receipts, replay protection and restart recovery |
 | O1 Sprint 1D — Local Helper | Complete (test-only) | Real Linux peer-credential checks and independent authorisation tests |
 | O1 Sprint 2 — End-to-end integration | Committed, test-only (25 November 2026) | Agent–helper socket integration, two-product simulation, local locks, signed backup evidence and receipt reconciliation |
+| O1 Sprint 2R — Independent acceptance | GO_TEST_ONLY (26 November 2026) | 8/8 technical findings closed, 42/42 evidence files verified. [Acceptance report](docs/audit/O1-Sprint-2R-Independent-Acceptance.md) |
 | Production deployment and clinical readiness | Not approved | Requires remaining governance approvals, runtime integration, independent testing and site commissioning |
 
 The [Sprint 1 engineering report](docs/implementation/O1-Sprint-1.md) records commands, test results and scope limitations. See the [O0 v1.2 independent audit](docs/zyposoft_operations_platform_independent_o0_v1_2_architecture_security_re_audit.html) for the design-gate conditions.

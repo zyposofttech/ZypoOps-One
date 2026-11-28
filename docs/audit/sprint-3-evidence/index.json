@@ -1,0 +1,615 @@
+{
+  "accepted_baseline": "92b3b4059dc96ea4ec78222d6774f4ad16873c23",
+  "source_sha256": "317b3a84a38c49e3f6a94cb6a4415fc7afb4f4e23e8fbf3a30458b0044d8dc29",
+  "method": "scripts/verify-sprint2r-evidence.py --fingerprint",
+  "type": "unsigned local engineering evidence",
+  "hosted_candidate": null,
+  "go": {
+    "go-windows": {
+      "pass_parent": 18,
+      "pass_subtest": 68
+    },
+    "race-windows": {
+      "pass_parent": 18,
+      "pass_subtest": 68
+    },
+    "linux": {
+      "pass_parent": 36,
+      "pass_subtest": 192,
+      "skip_parent": 1
+    },
+    "linux-race": {
+      "pass_parent": 36,
+      "pass_subtest": 192,
+      "skip_parent": 1
+    }
+  },
+  "runs": [
+    {
+      "name": "lint",
+      "command": [
+        "pnpm.cmd",
+        "lint"
+      ],
+      "environment": {},
+      "seconds": 2.11,
+      "exit_code": 0,
+      "sha256": "e525215478153869d9d453ddda3298f60e4afc9c36b05fefafcd6bbca66e81da",
+      "log": "lint.log"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm.cmd",
+        "typecheck"
+      ],
+      "environment": {},
+      "seconds": 3.296,
+      "exit_code": 0,
+      "sha256": "8aef6a41fde4293a7754a8bd473580baeae39e21d693ea7a17174c72dfafb61d",
+      "log": "typecheck.log"
+    },
+    {
+      "name": "test",
+      "command": [
+        "pnpm.cmd",
+        "test"
+      ],
+      "environment": {},
+      "seconds": 0.766,
+      "exit_code": 0,
+      "sha256": "c4d0a3f0c11a51e8921ee5930a9505da60bdd0c2fc77ad03a61ebca47e5f27d3",
+      "log": "test.log",
+      "node_runs": [
+        {
+          "tests": 31,
+          "suites": 0,
+          "pass": 31,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      ]
+    },
+    {
+      "name": "test-interop",
+      "command": [
+        "pnpm.cmd",
+        "test:interop"
+      ],
+      "environment": {},
+      "seconds": 1.141,
+      "exit_code": 0,
+      "sha256": "93da95c8f612e44b9a9abcb0e5f4b36c3cfce0b6f818bac413ac5b2878ad96a8",
+      "log": "test-interop.log",
+      "node_runs": [
+        {
+          "tests": 2,
+          "suites": 0,
+          "pass": 2,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      ]
+    },
+    {
+      "name": "postgres-central",
+      "command": [
+        "node",
+        "infrastructure/local-development/tenancy.mjs"
+      ],
+      "environment": {},
+      "seconds": 29.015,
+      "exit_code": 0,
+      "sha256": "5b6fc5465a9f3cad5d8538d1e66781e88a894c1fefbca026b07a7ae710b9bc30",
+      "log": "postgres-central.log",
+      "node_runs": [
+        {
+          "tests": 5,
+          "suites": 0,
+          "pass": 5,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        {
+          "tests": 13,
+          "suites": 0,
+          "pass": 13,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        }
+      ]
+    },
+    {
+      "name": "go-vet",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\go\\bin\\go.exe",
+        "vet",
+        "./..."
+      ],
+      "environment": {},
+      "seconds": 18.937,
+      "exit_code": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log": "go-vet.log"
+    },
+    {
+      "name": "go-windows",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\go\\bin\\go.exe",
+        "test",
+        "-count=1",
+        "-json",
+        "./..."
+      ],
+      "environment": {},
+      "seconds": 11.5,
+      "exit_code": 0,
+      "sha256": "dbb2d17c93a1fd6f7a6002159cfd0d2f4d8e47f9c9d917fa3be18e497e728e3e",
+      "log": "go-windows.log",
+      "go_named_counts": {
+        "pass_parent": 18,
+        "pass_subtest": 68
+      }
+    },
+    {
+      "name": "race-windows",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\go\\bin\\go.exe",
+        "test",
+        "-race",
+        "-count=1",
+        "-json",
+        "./..."
+      ],
+      "environment": {
+        "CGO_ENABLED": "1",
+        "CC": "clang"
+      },
+      "seconds": 28.141,
+      "exit_code": 0,
+      "sha256": "e92c929f104dc552e8542ad815447f2e4ff760361578ea9859ef5c8607687b0c",
+      "log": "race-windows.log",
+      "go_named_counts": {
+        "pass_parent": 18,
+        "pass_subtest": 68
+      }
+    },
+    {
+      "name": "vet-linux",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\go\\bin\\go.exe",
+        "vet",
+        "./..."
+      ],
+      "environment": {
+        "GOOS": "linux",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "0"
+      },
+      "seconds": 14.344,
+      "exit_code": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log": "vet-linux.log"
+    },
+    {
+      "name": "build-linux",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\go\\bin\\go.exe",
+        "test",
+        "-c",
+        "-o",
+        "D:\\ZypoOps-One\\.work\\sprint3\\linux\\",
+        "./..."
+      ],
+      "environment": {
+        "GOOS": "linux",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "0"
+      },
+      "seconds": 2.953,
+      "exit_code": 0,
+      "sha256": "f6fae633e1b00c2bb3660280c0feb1d0701230e8501610dd98a82fb63db5a164",
+      "log": "build-linux.log"
+    },
+    {
+      "name": "build-linux-race",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\go\\bin\\go.exe",
+        "test",
+        "-c",
+        "-o",
+        "D:\\ZypoOps-One\\.work\\sprint3\\linux-race\\",
+        "-race",
+        "-ldflags",
+        "-linkmode=external -extldflags=-Wl,--dynamic-linker,/mnt/host/d/ZypoOps-One/.work/linux-glibc/ld-linux-x86-64.so.2,-rpath,/mnt/host/d/ZypoOps-One/.work/linux-glibc",
+        "./..."
+      ],
+      "environment": {
+        "GOOS": "linux",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "1",
+        "CC": "D:/ZypoOps-One/.work/zigtool/ziglang/zig.exe cc -target x86_64-linux-gnu.2.36",
+        "ZIG_GLOBAL_CACHE_DIR": "D:\\ZypoOps-One\\.work\\zig-global",
+        "ZIG_LOCAL_CACHE_DIR": "D:\\ZypoOps-One\\.work\\zig-local"
+      },
+      "seconds": 3.203,
+      "exit_code": 0,
+      "sha256": "f6fae633e1b00c2bb3660280c0feb1d0701230e8501610dd98a82fb63db5a164",
+      "log": "build-linux-race.log"
+    },
+    {
+      "name": "generate-scratch",
+      "command": [
+        "node",
+        "D:\\ZypoOps-One\\scripts\\generate-types.mjs"
+      ],
+      "cwd": "D:\\ZypoOps-One\\.work\\sprint3\\drift",
+      "log": "generate-scratch.log",
+      "seconds": 0.062,
+      "exit_code": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "compare-bindings",
+      "command": [
+        "C:\\Users\\Jiten\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-c",
+        "from pathlib import Path; import hashlib; src=Path('packages/management-contracts'); dst=Path('.work/sprint3/drift')/src; names=['generated/types.ts','types_generated.go']; pairs=[(n,(src/n).read_bytes().replace(b'\\r\\n',b'\\n'),(dst/n).read_bytes().replace(b'\\r\\n',b'\\n')) for n in names]; assert all(a==b for n,a,b in pairs); print([(n,hashlib.sha256(a).hexdigest()) for n,a,b in pairs])"
+      ],
+      "cwd": "D:\\ZypoOps-One",
+      "log": "compare-bindings.log",
+      "seconds": 0.11,
+      "exit_code": 0,
+      "sha256": "b2feceba25698cead9277cca429dd066a6ffd23123017f6a3fca15be52c79ac2"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check"
+      ],
+      "cwd": "D:\\ZypoOps-One",
+      "log": "diff-check.log",
+      "seconds": 0.046,
+      "exit_code": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "gofmt",
+      "command": [
+        "D:\\ZypoOps-One\\.work\\go\\bin\\gofmt.exe",
+        "-l",
+        "cmd/synthetic-csr/main.go",
+        "tests/central/worker/main_linux.go"
+      ],
+      "cwd": "D:\\ZypoOps-One",
+      "log": "gofmt.log",
+      "seconds": 0.016,
+      "exit_code": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "hosted-baseline",
+      "command": [
+        "gh",
+        "run",
+        "list",
+        "--workflow",
+        "foundation.yml",
+        "--limit",
+        "8",
+        "--json",
+        "databaseId,conclusion,headSha,url"
+      ],
+      "environment": {},
+      "seconds": 2.031,
+      "exit_code": 0,
+      "sha256": "a480787238560d9c964ac5f6f6293a130d9115bfe57e0594477865916a481bd6",
+      "log": "hosted-baseline.log"
+    },
+    {
+      "name": "source",
+      "command": [
+        "C:\\Users\\Jiten\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "scripts/verify-sprint2r-evidence.py",
+        "--fingerprint"
+      ],
+      "cwd": "D:\\ZypoOps-One",
+      "log": "source.log",
+      "seconds": 0.157,
+      "exit_code": 0,
+      "sha256": "2e624bb35e708ff39cea7f01f1dbb19d54fee965f2acda20a99d7b0c41cf3825"
+    },
+    {
+      "name": "tool-versions",
+      "command": [
+        "C:\\Users\\Jiten\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-c",
+        "import platform,subprocess; print(platform.platform()); [subprocess.run(cmd,check=True) for cmd in [['.work/go/bin/go.exe','version'],['node','-v'],['pnpm.cmd','-v'],['C:/Program Files/PostgreSQL/16/bin/postgres.exe','--version']]]"
+      ],
+      "cwd": "D:\\ZypoOps-One",
+      "log": "tool-versions.log",
+      "seconds": 0.515,
+      "exit_code": 0,
+      "sha256": "b5b0040c096fe0622de0a38228c7ebcf75d89c24e7977d0ac6748f7ea6744322"
+    },
+    {
+      "name": "linux-platform",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "uname",
+        "-srm"
+      ],
+      "environment": {},
+      "seconds": 0.141,
+      "exit_code": 0,
+      "sha256": "04fbe132d7dc364c01c5f64b17a8d6cbf88b3164a9816284a5cf17a132e7eedd",
+      "log": "linux-platform.log"
+    },
+    {
+      "name": "linux-identity",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "id"
+      ],
+      "environment": {},
+      "seconds": 0.141,
+      "exit_code": 0,
+      "sha256": "f920e643e63ab91fd70b7291242b818e8b6250edf6242a7651439a54107457ac",
+      "log": "linux-identity.log"
+    },
+    {
+      "name": "linux-cryptography",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux/cryptography.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 5.406,
+      "exit_code": 0,
+      "sha256": "85bd4aeced85d8f248d48e6b4ea6ac15ea021ae0322a7fb4768460452be4530a",
+      "log": "linux-cryptography.log",
+      "go_named_counts": {
+        "pass_parent": 5,
+        "pass_subtest": 24
+      }
+    },
+    {
+      "name": "linux-local-helper",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux/local-helper.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 1.313,
+      "exit_code": 0,
+      "sha256": "625f1d139e618d7652d90faca2ce8a7a7caec551ce393a07279f3a5085d48475",
+      "log": "linux-local-helper.log",
+      "go_named_counts": {
+        "pass_parent": 3,
+        "pass_subtest": 16
+      }
+    },
+    {
+      "name": "linux-local-policy",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux/local-policy.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 0.672,
+      "exit_code": 0,
+      "sha256": "c5927a14dc9867c7e0da2df39009fdfb1b392d3e1208c65e1b610508c0065c86",
+      "log": "linux-local-policy.log",
+      "go_named_counts": {
+        "pass_parent": 1,
+        "pass_subtest": 26
+      }
+    },
+    {
+      "name": "linux-site-agent",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux/site-agent.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 6.281,
+      "exit_code": 0,
+      "sha256": "075f9e6e546ffd563be11b107749dc00ad0cf93776d431e7a6948ed0be37052e",
+      "log": "linux-site-agent.log",
+      "go_named_counts": {
+        "pass_parent": 8,
+        "pass_subtest": 5
+      }
+    },
+    {
+      "name": "linux-sprint2",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux/sprint2.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 40.031,
+      "exit_code": 0,
+      "sha256": "d1faf13a36deebcbcd25ad5324973fcc66815200acf44e3a041c8067555d8b83",
+      "log": "linux-sprint2.log",
+      "go_named_counts": {
+        "pass_parent": 19,
+        "pass_subtest": 121,
+        "skip_parent": 1
+      }
+    },
+    {
+      "name": "linux-race-cryptography",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux-race/cryptography.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 1.735,
+      "exit_code": 0,
+      "sha256": "2c779295b93729544146486353fc59686cbacc0477f4438cda11bba0eec38d8b",
+      "log": "linux-race-cryptography.log",
+      "go_named_counts": {
+        "pass_parent": 5,
+        "pass_subtest": 24
+      }
+    },
+    {
+      "name": "linux-race-local-helper",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux-race/local-helper.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 3.0,
+      "exit_code": 0,
+      "sha256": "a2ac0d1886eb3da936f274d5d765d1f86ac078c831e860f18b096802d611c334",
+      "log": "linux-race-local-helper.log",
+      "go_named_counts": {
+        "pass_parent": 3,
+        "pass_subtest": 16
+      }
+    },
+    {
+      "name": "linux-race-local-policy",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux-race/local-policy.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 3.359,
+      "exit_code": 0,
+      "sha256": "f6e9461c1876b01c35d5b38069e32fb2a3490d069047531b461810001b961ef8",
+      "log": "linux-race-local-policy.log",
+      "go_named_counts": {
+        "pass_parent": 1,
+        "pass_subtest": 26
+      }
+    },
+    {
+      "name": "linux-race-site-agent",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux-race/site-agent.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 15.078,
+      "exit_code": 0,
+      "sha256": "0976c114a2632ffac39d3625e5ac11f19dd131aab47a10574ebca35c412e56c0",
+      "log": "linux-race-site-agent.log",
+      "go_named_counts": {
+        "pass_parent": 8,
+        "pass_subtest": 5
+      }
+    },
+    {
+      "name": "linux-race-sprint2",
+      "command": [
+        "wsl.exe",
+        "-d",
+        "docker-desktop",
+        "-u",
+        "nobody",
+        "--exec",
+        "/mnt/host/d/ZypoOps-One/.work/sprint3/linux-race/sprint2.test",
+        "-test.v",
+        "-test.count=1"
+      ],
+      "environment": {},
+      "seconds": 108.594,
+      "exit_code": 0,
+      "sha256": "074103962ecf377e4323ef0766caf18a4115778b751ae1b396594fcc887da2c2",
+      "log": "linux-race-sprint2.log",
+      "go_named_counts": {
+        "pass_parent": 19,
+        "pass_subtest": 121,
+        "skip_parent": 1
+      }
+    }
+  ]
+}

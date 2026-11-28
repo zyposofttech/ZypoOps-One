@@ -1,0 +1,303 @@
+=== RUN   TestCentralReceiptBinding
+--- PASS: TestCentralReceiptBinding (0.21s)
+=== RUN   TestMultiSiteEnrolment
+--- PASS: TestMultiSiteEnrolment (0.11s)
+=== RUN   TestConflictingSubmissions
+=== RUN   TestConflictingSubmissions/bundle
+=== RUN   TestConflictingSubmissions/idempotency_key
+=== RUN   TestConflictingSubmissions/nonce
+=== RUN   TestConflictingSubmissions/sequence
+=== RUN   TestConflictingSubmissions/cross-product_grant
+--- PASS: TestConflictingSubmissions (1.86s)
+    --- PASS: TestConflictingSubmissions/bundle (0.48s)
+    --- PASS: TestConflictingSubmissions/idempotency_key (0.40s)
+    --- PASS: TestConflictingSubmissions/nonce (0.36s)
+    --- PASS: TestConflictingSubmissions/sequence (0.27s)
+    --- PASS: TestConflictingSubmissions/cross-product_grant (0.34s)
+=== RUN   TestCompetingOperations
+=== RUN   TestCompetingOperations/abort
+=== RUN   TestCompetingOperations/execute
+=== RUN   TestCompetingOperations/concurrent
+--- PASS: TestCompetingOperations (0.54s)
+    --- PASS: TestCompetingOperations/abort (0.18s)
+    --- PASS: TestCompetingOperations/execute (0.17s)
+    --- PASS: TestCompetingOperations/concurrent (0.18s)
+=== RUN   TestSubstitutedHelperExecution
+--- PASS: TestSubstitutedHelperExecution (0.34s)
+=== RUN   TestCrashMatrix
+=== RUN   TestCrashMatrix/CR01
+    crash_linux_test.go:439: CR01 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR02
+    crash_linux_test.go:439: CR02 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR03
+    crash_linux_test.go:439: CR03 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR05
+    crash_linux_test.go:439: CR05 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR06
+    crash_linux_test.go:439: CR06 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR07
+    crash_linux_test.go:439: CR07 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR08
+    crash_linux_test.go:439: CR08 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR09-expired-committed
+    crash_linux_test.go:439: CR09-expired-committed job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR09-expired-reservation
+    crash_linux_test.go:439: CR09-expired-reservation job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=0 grants(agent/helper)=1/1 receipts=1 state=REJECTED
+=== RUN   TestCrashMatrix/CR09-stale-backup
+    crash_linux_test.go:439: CR09-stale-backup job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=0 grants(agent/helper)=1/1 receipts=1 state=REJECTED
+=== RUN   TestCrashMatrix/CR09-revoked-grant
+    crash_linux_test.go:439: CR09-revoked-grant job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=0 grants(agent/helper)=1/1 receipts=1 state=REJECTED
+=== RUN   TestCrashMatrix/CR09-revoked-ops-job-committed
+    crash_linux_test.go:439: CR09-revoked-ops-job-committed job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR09-revoked-ops-job-reserved
+    crash_linux_test.go:439: CR09-revoked-ops-job-reserved job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=0 grants(agent/helper)=1/1 receipts=1 state=REJECTED
+=== RUN   TestCrashMatrix/CR09-revoked-ops-job-before-helper-admission
+=== RUN   TestCrashMatrix/CR09-revoked-ops-job-terminal
+    crash_linux_test.go:439: CR09-revoked-ops-job-terminal job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR09-rotated-ops-job-committed
+    crash_linux_test.go:439: CR09-rotated-ops-job-committed job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR09-revoked-ops-job-repeated-recovery
+    crash_linux_test.go:439: CR09-revoked-ops-job-repeated-recovery job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR09-revoked-ops-job-outbox
+    crash_linux_test.go:439: CR09-revoked-ops-job-outbox job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR09-revoked-receipt-key
+=== RUN   TestCrashMatrix/CR09-revoked-ops-job-observation-offline
+    crash_linux_test.go:439: CR09-revoked-ops-job-observation-offline job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+=== RUN   TestCrashMatrix/CR10
+    crash_linux_test.go:439: CR10 job=7da98fc5-a9c0-53c1-9958-d288d62b4f49 execution=3f23f691-9aff-5c1b-83a2-64a2ce959097 effects=1 grants(agent/helper)=1/1 receipts=1 state=SUCCEEDED
+--- PASS: TestCrashMatrix (12.54s)
+    --- PASS: TestCrashMatrix/CR01 (0.61s)
+    --- PASS: TestCrashMatrix/CR02 (0.55s)
+    --- PASS: TestCrashMatrix/CR03 (0.57s)
+    --- PASS: TestCrashMatrix/CR05 (0.58s)
+    --- PASS: TestCrashMatrix/CR06 (0.59s)
+    --- PASS: TestCrashMatrix/CR07 (0.61s)
+    --- PASS: TestCrashMatrix/CR08 (0.58s)
+    --- PASS: TestCrashMatrix/CR09-expired-committed (0.55s)
+    --- PASS: TestCrashMatrix/CR09-expired-reservation (0.84s)
+    --- PASS: TestCrashMatrix/CR09-stale-backup (0.57s)
+    --- PASS: TestCrashMatrix/CR09-revoked-grant (0.49s)
+    --- PASS: TestCrashMatrix/CR09-revoked-ops-job-committed (0.53s)
+    --- PASS: TestCrashMatrix/CR09-revoked-ops-job-reserved (0.52s)
+    --- PASS: TestCrashMatrix/CR09-revoked-ops-job-before-helper-admission (0.51s)
+    --- PASS: TestCrashMatrix/CR09-revoked-ops-job-terminal (0.59s)
+    --- PASS: TestCrashMatrix/CR09-rotated-ops-job-committed (0.55s)
+    --- PASS: TestCrashMatrix/CR09-revoked-ops-job-repeated-recovery (0.62s)
+    --- PASS: TestCrashMatrix/CR09-revoked-ops-job-outbox (0.54s)
+    --- PASS: TestCrashMatrix/CR09-revoked-receipt-key (0.66s)
+    --- PASS: TestCrashMatrix/CR09-revoked-ops-job-observation-offline (0.78s)
+    --- PASS: TestCrashMatrix/CR10 (0.70s)
+=== RUN   TestAdmissionFailures
+=== RUN   TestAdmissionFailures/zyposono-sim/tampered_job
+=== RUN   TestAdmissionFailures/zyposono-sim/expired_job
+=== RUN   TestAdmissionFailures/zyposono-sim/wrong_tenant
+=== RUN   TestAdmissionFailures/zyposono-sim/wrong_site
+=== RUN   TestAdmissionFailures/zyposono-sim/wrong_key_purpose
+=== RUN   TestAdmissionFailures/zyposono-sim/unapproved_artifact
+=== RUN   TestAdmissionFailures/zyposono-sim/cross-product_binding
+=== RUN   TestAdmissionFailures/zyposono-sim/missing_backup
+=== RUN   TestAdmissionFailures/zyposono-sim/old_backup
+=== RUN   TestAdmissionFailures/zyposono-sim/wrong_backup_purpose
+=== RUN   TestAdmissionFailures/zyposono-sim/tampered_backup
+=== RUN   TestAdmissionFailures/zyposono-sim/wrong_dataset
+=== RUN   TestAdmissionFailures/zyposono-sim/unencrypted
+=== RUN   TestAdmissionFailures/zyposono-sim/failed_integrity
+=== RUN   TestAdmissionFailures/zyposono-sim/backup_from_another_operation
+=== RUN   TestAdmissionFailures/zyposono-sim/missing_consent
+=== RUN   TestAdmissionFailures/zyposono-sim/active_lock
+=== RUN   TestAdmissionFailures/zyposono-sim/product_unready
+=== RUN   TestAdmissionFailures/zyposono-sim/malformed_locks
+=== RUN   TestAdmissionFailures/zyposono-sim/local_timeout
+=== RUN   TestAdmissionFailures/zyposono-sim/wrong_installation
+=== RUN   TestAdmissionFailures/zyposono-sim/backup_manifest_mismatch
+=== RUN   TestAdmissionFailures/zyposono-sim/extra_dataset
+=== RUN   TestAdmissionFailures/zyposono-sim/wrong_backup_signer
+=== RUN   TestAdmissionFailures/zyposono-sim/unknown_lock
+=== RUN   TestAdmissionFailures/zyposono-sim/unavailable_endpoint
+=== RUN   TestAdmissionFailures/zyposono-sim/revoked_authority
+=== RUN   TestAdmissionFailures/mock-secondary/tampered_job
+=== RUN   TestAdmissionFailures/mock-secondary/expired_job
+=== RUN   TestAdmissionFailures/mock-secondary/wrong_tenant
+=== RUN   TestAdmissionFailures/mock-secondary/wrong_site
+=== RUN   TestAdmissionFailures/mock-secondary/wrong_key_purpose
+=== RUN   TestAdmissionFailures/mock-secondary/unapproved_artifact
+=== RUN   TestAdmissionFailures/mock-secondary/cross-product_binding
+=== RUN   TestAdmissionFailures/mock-secondary/missing_backup
+=== RUN   TestAdmissionFailures/mock-secondary/old_backup
+=== RUN   TestAdmissionFailures/mock-secondary/wrong_backup_purpose
+=== RUN   TestAdmissionFailures/mock-secondary/tampered_backup
+=== RUN   TestAdmissionFailures/mock-secondary/wrong_dataset
+=== RUN   TestAdmissionFailures/mock-secondary/unencrypted
+=== RUN   TestAdmissionFailures/mock-secondary/failed_integrity
+=== RUN   TestAdmissionFailures/mock-secondary/backup_from_another_operation
+=== RUN   TestAdmissionFailures/mock-secondary/missing_consent
+=== RUN   TestAdmissionFailures/mock-secondary/active_lock
+=== RUN   TestAdmissionFailures/mock-secondary/product_unready
+=== RUN   TestAdmissionFailures/mock-secondary/malformed_locks
+=== RUN   TestAdmissionFailures/mock-secondary/local_timeout
+=== RUN   TestAdmissionFailures/mock-secondary/wrong_installation
+=== RUN   TestAdmissionFailures/mock-secondary/backup_manifest_mismatch
+=== RUN   TestAdmissionFailures/mock-secondary/extra_dataset
+=== RUN   TestAdmissionFailures/mock-secondary/wrong_backup_signer
+=== RUN   TestAdmissionFailures/mock-secondary/unknown_lock
+=== RUN   TestAdmissionFailures/mock-secondary/unavailable_endpoint
+=== RUN   TestAdmissionFailures/mock-secondary/revoked_authority
+--- PASS: TestAdmissionFailures (16.70s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/tampered_job (0.20s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/expired_job (0.28s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/wrong_tenant (0.27s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/wrong_site (0.25s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/wrong_key_purpose (0.24s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/unapproved_artifact (0.29s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/cross-product_binding (0.25s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/missing_backup (0.27s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/old_backup (0.24s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/wrong_backup_purpose (0.31s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/tampered_backup (0.24s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/wrong_dataset (0.26s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/unencrypted (0.25s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/failed_integrity (0.27s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/backup_from_another_operation (0.32s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/missing_consent (0.27s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/active_lock (0.33s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/product_unready (0.24s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/malformed_locks (0.25s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/local_timeout (1.48s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/wrong_installation (0.28s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/backup_manifest_mismatch (0.31s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/extra_dataset (0.25s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/wrong_backup_signer (0.34s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/unknown_lock (0.27s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/unavailable_endpoint (0.31s)
+    --- PASS: TestAdmissionFailures/zyposono-sim/revoked_authority (0.20s)
+    --- PASS: TestAdmissionFailures/mock-secondary/tampered_job (0.25s)
+    --- PASS: TestAdmissionFailures/mock-secondary/expired_job (0.27s)
+    --- PASS: TestAdmissionFailures/mock-secondary/wrong_tenant (0.22s)
+    --- PASS: TestAdmissionFailures/mock-secondary/wrong_site (0.43s)
+    --- PASS: TestAdmissionFailures/mock-secondary/wrong_key_purpose (0.23s)
+    --- PASS: TestAdmissionFailures/mock-secondary/unapproved_artifact (0.25s)
+    --- PASS: TestAdmissionFailures/mock-secondary/cross-product_binding (0.23s)
+    --- PASS: TestAdmissionFailures/mock-secondary/missing_backup (0.21s)
+    --- PASS: TestAdmissionFailures/mock-secondary/old_backup (0.21s)
+    --- PASS: TestAdmissionFailures/mock-secondary/wrong_backup_purpose (0.27s)
+    --- PASS: TestAdmissionFailures/mock-secondary/tampered_backup (0.28s)
+    --- PASS: TestAdmissionFailures/mock-secondary/wrong_dataset (0.24s)
+    --- PASS: TestAdmissionFailures/mock-secondary/unencrypted (0.22s)
+    --- PASS: TestAdmissionFailures/mock-secondary/failed_integrity (0.23s)
+    --- PASS: TestAdmissionFailures/mock-secondary/backup_from_another_operation (0.24s)
+    --- PASS: TestAdmissionFailures/mock-secondary/missing_consent (0.21s)
+    --- PASS: TestAdmissionFailures/mock-secondary/active_lock (0.32s)
+    --- PASS: TestAdmissionFailures/mock-secondary/product_unready (0.29s)
+    --- PASS: TestAdmissionFailures/mock-secondary/malformed_locks (0.33s)
+    --- PASS: TestAdmissionFailures/mock-secondary/local_timeout (1.61s)
+    --- PASS: TestAdmissionFailures/mock-secondary/wrong_installation (0.30s)
+    --- PASS: TestAdmissionFailures/mock-secondary/backup_manifest_mismatch (0.30s)
+    --- PASS: TestAdmissionFailures/mock-secondary/extra_dataset (0.25s)
+    --- PASS: TestAdmissionFailures/mock-secondary/wrong_backup_signer (0.22s)
+    --- PASS: TestAdmissionFailures/mock-secondary/unknown_lock (0.21s)
+    --- PASS: TestAdmissionFailures/mock-secondary/unavailable_endpoint (0.21s)
+    --- PASS: TestAdmissionFailures/mock-secondary/revoked_authority (0.25s)
+=== RUN   TestEffectBoundaries
+=== RUN   TestEffectBoundaries/zyposono-sim/LOCK_AFTER_PREFLIGHT
+=== RUN   TestEffectBoundaries/zyposono-sim/BACKUP_EXPIRES
+=== RUN   TestEffectBoundaries/zyposono-sim/GRANT_EXPIRES
+=== RUN   TestEffectBoundaries/zyposono-sim/JOB_EXPIRES
+=== RUN   TestEffectBoundaries/zyposono-sim/AFTER_EFFECT
+=== RUN   TestEffectBoundaries/zyposono-sim/POST_UNREADY
+=== RUN   TestEffectBoundaries/zyposono-sim/POST_VERIFY_OFFLINE
+=== RUN   TestEffectBoundaries/mock-secondary/LOCK_AFTER_PREFLIGHT
+=== RUN   TestEffectBoundaries/mock-secondary/BACKUP_EXPIRES
+=== RUN   TestEffectBoundaries/mock-secondary/GRANT_EXPIRES
+=== RUN   TestEffectBoundaries/mock-secondary/JOB_EXPIRES
+=== RUN   TestEffectBoundaries/mock-secondary/AFTER_EFFECT
+=== RUN   TestEffectBoundaries/mock-secondary/POST_UNREADY
+=== RUN   TestEffectBoundaries/mock-secondary/POST_VERIFY_OFFLINE
+--- PASS: TestEffectBoundaries (3.61s)
+    --- PASS: TestEffectBoundaries/zyposono-sim/LOCK_AFTER_PREFLIGHT (0.24s)
+    --- PASS: TestEffectBoundaries/zyposono-sim/BACKUP_EXPIRES (0.26s)
+    --- PASS: TestEffectBoundaries/zyposono-sim/GRANT_EXPIRES (0.24s)
+    --- PASS: TestEffectBoundaries/zyposono-sim/JOB_EXPIRES (0.22s)
+    --- PASS: TestEffectBoundaries/zyposono-sim/AFTER_EFFECT (0.24s)
+    --- PASS: TestEffectBoundaries/zyposono-sim/POST_UNREADY (0.24s)
+    --- PASS: TestEffectBoundaries/zyposono-sim/POST_VERIFY_OFFLINE (0.22s)
+    --- PASS: TestEffectBoundaries/mock-secondary/LOCK_AFTER_PREFLIGHT (0.23s)
+    --- PASS: TestEffectBoundaries/mock-secondary/BACKUP_EXPIRES (0.27s)
+    --- PASS: TestEffectBoundaries/mock-secondary/GRANT_EXPIRES (0.24s)
+    --- PASS: TestEffectBoundaries/mock-secondary/JOB_EXPIRES (0.23s)
+    --- PASS: TestEffectBoundaries/mock-secondary/AFTER_EFFECT (0.34s)
+    --- PASS: TestEffectBoundaries/mock-secondary/POST_UNREADY (0.30s)
+    --- PASS: TestEffectBoundaries/mock-secondary/POST_VERIFY_OFFLINE (0.32s)
+=== RUN   TestConcurrentDuplicates
+--- PASS: TestConcurrentDuplicates (0.20s)
+=== RUN   TestDisconnectedBeforeExecution
+--- PASS: TestDisconnectedBeforeExecution (0.23s)
+=== RUN   TestLocalAuthority
+--- PASS: TestLocalAuthority (0.14s)
+=== RUN   TestInvalidHelperFrames
+=== RUN   TestInvalidHelperFrames/zero
+=== RUN   TestInvalidHelperFrames/oversized
+=== RUN   TestInvalidHelperFrames/truncated
+=== RUN   TestInvalidHelperFrames/malformed
+=== RUN   TestInvalidHelperFrames/duplicate
+=== RUN   TestInvalidHelperFrames/unknown
+--- PASS: TestInvalidHelperFrames (0.12s)
+    --- PASS: TestInvalidHelperFrames/zero (0.00s)
+    --- PASS: TestInvalidHelperFrames/oversized (0.00s)
+    --- PASS: TestInvalidHelperFrames/truncated (0.00s)
+    --- PASS: TestInvalidHelperFrames/malformed (0.00s)
+    --- PASS: TestInvalidHelperFrames/duplicate (0.00s)
+    --- PASS: TestInvalidHelperFrames/unknown (0.00s)
+=== RUN   TestInvalidHelperReplies
+=== RUN   TestInvalidHelperReplies/oversize
+=== RUN   TestInvalidHelperReplies/truncated
+=== RUN   TestInvalidHelperReplies/duplicate
+=== RUN   TestInvalidHelperReplies/unknown_field
+=== RUN   TestInvalidHelperReplies/unknown_status
+=== RUN   TestInvalidHelperReplies/unexpected_result
+=== RUN   TestInvalidHelperReplies/missing_result
+=== RUN   TestInvalidHelperReplies/timeout
+=== RUN   TestInvalidHelperReplies/wrong_server_UID
+=== RUN   TestInvalidHelperReplies/wrong_server_GID
+--- PASS: TestInvalidHelperReplies (0.31s)
+    --- PASS: TestInvalidHelperReplies/oversize (0.00s)
+    --- PASS: TestInvalidHelperReplies/truncated (0.00s)
+    --- PASS: TestInvalidHelperReplies/duplicate (0.00s)
+    --- PASS: TestInvalidHelperReplies/unknown_field (0.00s)
+    --- PASS: TestInvalidHelperReplies/unknown_status (0.00s)
+    --- PASS: TestInvalidHelperReplies/unexpected_result (0.00s)
+    --- PASS: TestInvalidHelperReplies/missing_result (0.00s)
+    --- PASS: TestInvalidHelperReplies/timeout (0.30s)
+    --- PASS: TestInvalidHelperReplies/wrong_server_UID (0.00s)
+    --- PASS: TestInvalidHelperReplies/wrong_server_GID (0.00s)
+=== RUN   TestSocketPathSafety
+--- PASS: TestSocketPathSafety (0.00s)
+=== RUN   TestOverlappingAdmissions
+--- PASS: TestOverlappingAdmissions (0.25s)
+=== RUN   TestBoundedStalledConnections
+--- PASS: TestBoundedStalledConnections (0.19s)
+=== RUN   TestPreflightTransactions
+=== RUN   TestPreflightTransactions/agent/insert_failure
+=== RUN   TestPreflightTransactions/agent/cancel
+=== RUN   TestPreflightTransactions/agent/expiry
+=== RUN   TestPreflightTransactions/agent/clock_rollback
+=== RUN   TestPreflightTransactions/helper/insert_failure
+=== RUN   TestPreflightTransactions/helper/cancel
+=== RUN   TestPreflightTransactions/helper/expiry
+=== RUN   TestPreflightTransactions/helper/clock_rollback
+--- PASS: TestPreflightTransactions (1.43s)
+    --- PASS: TestPreflightTransactions/agent/insert_failure (0.31s)
+    --- PASS: TestPreflightTransactions/agent/cancel (0.20s)
+    --- PASS: TestPreflightTransactions/agent/expiry (0.20s)
+    --- PASS: TestPreflightTransactions/agent/clock_rollback (0.20s)
+    --- PASS: TestPreflightTransactions/helper/insert_failure (0.12s)
+    --- PASS: TestPreflightTransactions/helper/cancel (0.12s)
+    --- PASS: TestPreflightTransactions/helper/expiry (0.13s)
+    --- PASS: TestPreflightTransactions/helper/clock_rollback (0.13s)
+=== RUN   TestUnknownStageMigration
+--- PASS: TestUnknownStageMigration (0.32s)
+=== RUN   TestServiceProcess
+    workflow_linux_test.go:179: child-process entry point
+--- SKIP: TestServiceProcess (0.00s)
+=== RUN   TestCommittedDisconnect
+--- PASS: TestCommittedDisconnect (0.68s)
+PASS

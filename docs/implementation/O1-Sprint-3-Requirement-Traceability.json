@@ -1,0 +1,219 @@
+{
+  "accepted_baseline": "92b3b4059dc96ea4ec78222d6774f4ad16873c23",
+  "candidate_source_sha256": "317b3a84a38c49e3f6a94cb6a4415fc7afb4f4e23e8fbf3a30458b0044d8dc29",
+  "scope": "synthetic engineering",
+  "waves": [
+    {
+      "wave": "3A",
+      "requirements": [
+        "OP01",
+        "OP36"
+      ],
+      "deliverable": "Scoped NestJS dependency injection, credential resolution, bounded service errors and pool cleanup",
+      "implementation": [
+        "services/ops-api/modules/application.ts",
+        "services/ops-api/modules/context.ts",
+        "packages/database/tenant.ts"
+      ],
+      "verification": [
+        "tests/central/registry.test.ts",
+        "tests/tenancy/isolation.test.ts"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3B",
+      "requirements": [
+        "OP01",
+        "OP02",
+        "OP33"
+      ],
+      "deliverable": "Tenant, legal entity, site, host reference, product and installation; retained history and explicit ownership-transfer gate",
+      "implementation": [
+        "services/ops-api/modules/registry.ts",
+        "packages/database/migrations/003_central/migration.sql"
+      ],
+      "verification": [
+        "tests/central/registry.test.ts",
+        "tests/central/vertical.test.ts"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3C",
+      "requirements": [
+        "OP10",
+        "OP11",
+        "MC-01",
+        "MC-02"
+      ],
+      "deliverable": "Scoped expiring single-use claim, signed CSR, HMAC, enrolled identities and revocation",
+      "implementation": [
+        "cmd/synthetic-csr/main.go",
+        "services/ops-api/modules/enrolment.ts"
+      ],
+      "verification": [
+        "tests/central/fixture.ts",
+        "tests/central/vertical.test.ts"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3D",
+      "requirements": [
+        "OP03",
+        "OP04",
+        "OP12",
+        "OP29",
+        "MC-05",
+        "MC-08",
+        "MC-09"
+      ],
+      "deliverable": "Global immutable pilot artifact, scoped entitlement revisions and dual-proof approval lifecycle",
+      "implementation": [
+        "services/ops-api/modules/catalogue.ts"
+      ],
+      "verification": [
+        "tests/central/vertical.test.ts"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3E",
+      "requirements": [
+        "OP12",
+        "OP36",
+        "MC-03",
+        "MC-05",
+        "MC-09"
+      ],
+      "deliverable": "Transactional signed dispatch, per-installation sequence, retry and site hold",
+      "implementation": [
+        "services/ops-api/modules/jobs.ts",
+        "packages/database/migrations/003_central/migration.sql"
+      ],
+      "verification": [
+        "tests/central/vertical.test.ts",
+        "tests/central/pipe.ts"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3F",
+      "requirements": [
+        "AUX-01",
+        "MC-04",
+        "MC-07",
+        "MC-14"
+      ],
+      "deliverable": "Ordered progress, first terminal receipt, technical health and operation-bound backup proof",
+      "implementation": [
+        "services/ops-api/modules/evidence.ts",
+        "services/ops-api/modules/jobs.ts"
+      ],
+      "verification": [
+        "tests/central/vertical.test.ts",
+        "tests/central/pipe.ts",
+        "tests/central/worker/main_linux.go"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3G",
+      "requirements": [
+        "OP13",
+        "OP14",
+        "OP15",
+        "LOCAL-01"
+      ],
+      "deliverable": "Configuration staging, hard prerequisite blockers, offline/reconnection and expiry treatment",
+      "implementation": [
+        "services/ops-api/modules/readiness.ts",
+        "services/ops-api/modules/jobs.ts"
+      ],
+      "verification": [
+        "tests/central/vertical.test.ts",
+        "tests/central/worker/main_linux.go"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3H",
+      "requirements": [
+        "OP29",
+        "OP33",
+        "OP36"
+      ],
+      "deliverable": "Append-only correlated technical audit chain and onboarding projection",
+      "implementation": [
+        "services/ops-api/modules/context.ts",
+        "services/ops-api/modules/onboarding.ts"
+      ],
+      "verification": [
+        "tests/central/vertical.test.ts"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    },
+    {
+      "wave": "3I",
+      "requirements": [
+        "MC-03",
+        "MC-04",
+        "MC-05",
+        "MC-09",
+        "MC-14",
+        "AUX-01",
+        "LOCAL-01"
+      ],
+      "deliverable": "Four enrolled Agent identities, two tenants, three sites, two Linux product profiles and central recovery",
+      "implementation": [
+        "infrastructure/local-development/tenancy.mjs",
+        "tests/central/worker/main_linux.go"
+      ],
+      "verification": [
+        "tests/central/pipe.ts",
+        "tests/central/vertical.test.ts",
+        "tests/central/receipt-cut.ts",
+        "tests/central/receipt-process.ts"
+      ],
+      "evidence": [
+        "docs/audit/sprint-3-evidence/postgres-central.log"
+      ]
+    }
+  ],
+  "production_decisions": {
+    "OD01": "Authority and clinical independence; joint LOCAL-01 approval",
+    "OD02": "Host and protected identity",
+    "OD03": "Private PKI, enrolment and expiry recovery",
+    "OD04": "Management job signing and dual customer consent",
+    "OD05": "Operator IAM, tenancy and RLS",
+    "OD06": "Product-neutral artifact and deployment lifecycle",
+    "OD07": "Management telemetry and privacy separation",
+    "OD08": "Offline entitlement and continuity"
+  },
+  "governance_findings": [
+    "AUD-S2-GOV-01",
+    "AUD-S2-GOV-02",
+    "AUD-S2-GOV-03",
+    "AUD-S2-GOV-04",
+    "AUD-S2-GOV-05",
+    "AUD-S2-GOV-06"
+  ],
+  "runtime_register": "docs/audit/sprint-3-evidence/index.json"
+}

@@ -36,7 +36,7 @@ jobs:
           path: .work/ci-evidence/
           include-hidden-files: true
           retention-days: 14
-      - name: PostgreSQL 16 migrations and pooled RLS
+      - name: PostgreSQL 16, scoped central services and two-product integration
         env:
           PGBIN: /usr/lib/postgresql/16/bin
-        run: node infrastructure/local-development/tenancy.mjs
+        run: pnpm test:central

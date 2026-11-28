@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/contract/*.test.ts",
     "test:interop": "node --test tests/cryptography/*.test.ts",
+    "test:central": "node infrastructure/local-development/tenancy.mjs",
     "test:tenancy": "node --test tests/tenancy/*.test.ts",
     "db:generate": "prisma generate --schema packages/database/schema.prisma"
   },
